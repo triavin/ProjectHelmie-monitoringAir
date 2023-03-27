@@ -10,3 +10,9 @@ Relay 6 channel pinOut
 Relay 1 channel pinOut
 
 1. in => D10
+
+
+*note: sudah dilakukan testing pada alat, kesimpulan :
+- relay tidak dapat menyala sekaligus dalam waktu bersamaan
+- relay yang menyala terus menerus bergiliran dapat menyebabkan gangguan pada sinyal wifi
+- relay akan bernilai 1 jika diberi tegangan rendah (LOW)
