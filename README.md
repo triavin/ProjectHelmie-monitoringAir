@@ -23,7 +23,7 @@ perubahan pada folder final hanya akan berisi perubahan bersifat minor sedangkan
 
 ## tahap 1 test yang akan dilakukan 
 
-1. **test relay** 
+1. **test relay** :white_check_mark:
 2. **test all sensor** 
 3. **kontrol relay dengan nilai sensor**
 4. **send data to db**
