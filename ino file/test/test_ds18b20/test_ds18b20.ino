@@ -3,7 +3,7 @@
 #include <DallasTemperature.h>
 
 // mendefinisikan pada pin berapa sensor digunakan
-#define ONE_WIRE_BUS 2
+#define ONE_WIRE_BUS 11
 
 // Create a new instance of the oneWire class to communicate with any OneWire device:
 OneWire oneWire(ONE_WIRE_BUS);
@@ -27,7 +27,7 @@ void loop()
   // Fetch the temperature in degrees Celsius for device index:
   float tempC = sensors.getTempCByIndex(0); // the index 0 refers to the first device
   // Fetch the temperature in degrees Fahrenheit for device index:
-  float tempF = sensors.getTempFByIndex(0);
+  // float tempF = sensors.getTempFByIndex(0);
 
   // Print the temperature in Celsius in the Serial Monitor:
   Serial.print("Temperature: ");
