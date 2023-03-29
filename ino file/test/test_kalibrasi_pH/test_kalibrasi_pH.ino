@@ -19,5 +19,12 @@ void loop() {
   Serial.print(" | Nilai Tegangan Sensor pH : ");
   Serial.println(Tegangan_Sensor_pH);
   
-  delay(1000);
+  // delay 1 menit
+  delay(60000);
 }
+
+// note
+// nilai tegangan untuk pH 7  : 2.53 +- 0.01
+// nilai untuk pH 7           : 519 +- 1
+// nilai tegangan untuk pH 4  : 3.03 +- 0.04
+// nilai untuk pH 4           : 621 +- 8
