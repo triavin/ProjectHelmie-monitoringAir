@@ -12,3 +12,7 @@ menjadi referensi untuk library DallasTemperature dan akan merubah nilai yang di
 menjadi nilai suhu seperti celsius dan fahrenheit.
 
 penggabungan sensor sangat mudah dan tidak memerlukan kalibrasi terlebih dahulu.
+
+*note : sensor suhu ds18b20 sudah dilakukan pengujian
+        dan berdasarkan pengujian sensor dapat bekerja dengan baik
+        sensor dapat bekerja dengan baik pada pin digital 11 arduino
