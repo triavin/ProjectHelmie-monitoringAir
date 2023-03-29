@@ -27,6 +27,9 @@ perubahan pada folder final hanya akan berisi perubahan bersifat minor sedangkan
 2. **test all sensor** 
     * Sensor Suhu (ds18b20) :white_check_mark:
     * Sensor pH (4502C)
+        * kalibrasi Module :white_check_mark:
+        * kalibrasi Software
+        * test sensor dengan media air tanpa buffer
 3. **kontrol relay dengan nilai sensor**
 4. **send data to db**
 
