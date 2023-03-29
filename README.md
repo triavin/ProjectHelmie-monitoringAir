@@ -25,6 +25,8 @@ perubahan pada folder final hanya akan berisi perubahan bersifat minor sedangkan
 
 1. **test relay** :white_check_mark:
 2. **test all sensor** 
+    * Sensor Suhu (ds18b20) :white_check_mark:
+    * Sensor pH (4502C)
 3. **kontrol relay dengan nilai sensor**
 4. **send data to db**
 
