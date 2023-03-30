@@ -30,7 +30,7 @@ perubahan pada folder final hanya akan berisi perubahan bersifat minor sedangkan
         * kalibrasi Module :white_check_mark:
         * kalibrasi Software :white_check_mark:
         * test sensor dengan media air tanpa buffer :white_check_mark:
-3. **kontrol relay dengan nilai sensor** 
+3. **kontrol relay dengan nilai sensor** :white_check_mark:
 4. **send data to db**
 
 ## tahap 2 | test Fuzzy Logic (if it's use right logic) 
