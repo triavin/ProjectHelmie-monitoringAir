@@ -38,3 +38,8 @@ tahap kalibrasi ada dua yaitu:
   penyetelan module ini dilakukan dengan kondisi bagian groud prob pada modul dihubungkan dengan bagian positif
   yang terleta pada bagian tengah prob. tujuan dari menghubungkan bagian groud dan positif ini untuk mencari nilai
   yang akan diberikan module jika membaca air dengan nilai pH 7.
+
+*note 30-03-23 :
+  - Update nilai variabel pH 7 hasil kalibrasi from 2.68 to 2.53
+  - Update rumus tegangan sensor mengikuti tegangan yang digunakan yaitu 5v
+  - Update loop menjadi memanggil function getDataPh()
