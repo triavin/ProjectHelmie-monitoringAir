@@ -12,16 +12,28 @@ float fysedang[3] = {20, 127.5, 235};
 float fycepat[3] = {155, 255, 255};
 float inputf, outputf;
 
-float FiN()
+float FuzzyfikasiInputDekat()
 {
+    // jika nilai input kurang dari batas bawah variabel dekat
+    // maka akan langsung mengeluaran nilai 1 (true)
+    
     if (inputf < fudeket[2])
     {
         return 1;
     }
+
+    // jika nilai input lebih besar atau sama dengan batas bawah 
+    // tapi tidak lebih besar atau sama dengan dari batas atas variabel dekat
+    // rumus [ (C - X) / (C - B)]
+
     else if (inputf >= fudeket[2] && inputf <= fudeket[3])
     {
         return (fudeket[3] - inputf) / (fudeket[3] - fudeket[2]);
     }
+
+    // jika nilai input lebih besar dari nilai batas atas variabel dekat
+    // maka akan langsung mengeluarkan nilai 0 (false)
+    
     else if (inputf > fudeket[3])
     {
         return 0;
@@ -114,7 +126,7 @@ void implikasi()
 {
     // sesuai dengan rule
     //  if deket then lambat
-    a1 = 100 - (FiN() * (fylambat[2] - fylambat[1]));
+    a1 = 100 - (FuzzyfikasiInputDekat() * (fylambat[2] - fylambat[1]));
     // if lumayan then sedang
     b1a = 20 + (FiZ() * (fysedang[1] - fysedang[0]));
     b1b = 235 - (FiZ() * (fysedang[2] - fysedang[1]));
@@ -124,8 +136,8 @@ void implikasi()
 void luas_deffuzzy()
 {
     implikasi();
-    L1 = ((fylambat[2] - a1) * FiN()) / 2;  //= 15.432222
-    L2 = (a1 - fylambat[0]) * FiN();        // = 24.69155
+    L1 = ((fylambat[2] - a1) * FuzzyfikasiInputDekat()) / 2;  //= 15.432222
+    L2 = (a1 - fylambat[0]) * FuzzyfikasiInputDekat();        // = 24.69155
     L3 = ((b1a - fysedang[0]) * FiZ()) / 2; // = 0
     L4 = ((fysedang[2] - b1b) * FiZ()) / 2; // = 0
     L5 = (b1b - b1a) * FiZ();               // = 0
@@ -147,7 +159,7 @@ float f(float x)
         return A * x;
     }
 }
-/*Function definition to perform integration by Simpson's 1/3rd Rule */
+/*Function deFuzzyfikasiInputDekatition to perform integration by Simpson's 1/3rd Rule */
 float simpsons(float f(float x), float a, float b, float n)
 {
     float h, integral, x, sum = 0;
@@ -187,7 +199,7 @@ float fx(float limd, float limu, float a, float b, int sel)
 }
 /*
   (fylambat[2]-pwm)/fylambat[2]-fylambat[0] untuk a1 <= pwm <= 100
-  FiN() untuk pwm < a1
+  FuzzyfikasiInputDekat() untuk pwm < a1
   (pwm-20)/127.5-20 untuk 20 <= pwm <= b1a
   (235-pwm)/235-1275 untuk b1b <= pwm <= 235
   0 untuk b1a < pwm > b1b
@@ -200,7 +212,7 @@ void moment()
     // M1 = ∫ ((100-x)/100)x dx ==================> limd a1 dan limup 100
     M1 = fx(a1, fylambat[2], fylambat[2], (fylambat[2] - fylambat[0]), 1);
     // M2 = ∫ 0.555556x dx ==================> limd 0 dan limup a1
-    M2 = fx(fylambat[0], a1, FiN(), 0, 0);
+    M2 = fx(fylambat[0], a1, FuzzyfikasiInputDekat(), 0, 0);
     // M3 = ∫ ((x-20)/107.5)x dx ==================> limd 20 dan limup b1a
     M3 = fx(fysedang[0], b1a, fysedang[0], (fysedang[1] - fysedang[0]), 0);
     // M4 = ∫ ((235-x)/107.5)x dx ==================> limd b1b dan limup 235
@@ -217,6 +229,7 @@ float deffuzzyfikasi()
     moment();
     return (M1 + M2 + M3 + M4 + M5 + M6 + M7) / (L1 + L2 + L3 + L4 + L5 + L6 + L7);
 }
+
 void setup()
 {
     Serial.begin(9600);
