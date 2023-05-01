@@ -12,6 +12,7 @@ float fysedang[3] = {20, 127.5, 235};
 float fycepat[3] = {155, 255, 255};
 float inputf, outputf;
 
+// fungsi fuzzyfikasi nilai input untuk nilai keanggotaan dekat
 
 float FuzzyfikasiInputDekat()
 {
@@ -25,7 +26,12 @@ float FuzzyfikasiInputDekat()
 
     // jika nilai input lebih besar atau sama dengan batas bawah 
     // tapi tidak lebih besar atau sama dengan dari batas atas variabel dekat
-    // rumus [ (C - X) / (C - B)]
+    // rumus [ (D - X) / (D - C)]
+    // *note : X = Input
+    //         C = Nilai sebelum batas atas pada variabel (array) dekat = dekat[last - 1]
+    //         D = Nilai batas atas variabel (array) dekat atau nilai akhir pada array dekat = dekat[last]
+    //
+    // * rumus ini jika dibuat kedalam bentuk grafik akan membentuk garis diagonal menurun
 
     else if (inputf >= fudeket[2] && inputf <= fudeket[3])
     {
@@ -40,40 +46,133 @@ float FuzzyfikasiInputDekat()
         return 0;
     }
 }
+
+// fungsi fuzzyfikasi nilai input untuk nilai keanggotaan lumayan
+
 float FuzzyfikasiInputLumayan()
 {
+    // jika input kurang dari nilai batas bawah variable lumayan
+    // maka akan langsung mengeluarkan nilai 0 (false)
+    
     if (inputf < fulumayan[0])
     {
         return 0;
     }
+
+    // jika input lebih dari atau sama dengan nilai batas bawah variabel lumayan 
+    // dan kurang dari nilai kedua pada (array) variabel lumayan
+    // maka akan menggunakan rumus [ (X - A) / (B - A)]
+    // * note : X = nilai input
+    //          A = Batas bawah / nilai pertama pada variabel (array) lumayan = lumayan[0]
+    //          B = Nilai kedua pada variabel (array) lumayan = lumayan[1]
+    //
+    // * jika rumus ini dibuat kedalam bentuk grafik akan membentuk garis diagonal menanjak
+
     else if (inputf >= fulumayan[0] && inputf <= fulumayan[1])
     {
         return (inputf - fulumayan[0]) / (fulumayan[1] - fulumayan[0]);
     }
+
+    // jika input lebih dari atau sama dengan nilai kedua variabel (array) lumayan
+    // dan lebih kecil atau sama dengan nilai ketiga variabel (array) lumayan 
+    // "nilai sebelum nilai terakhir pada variabel lumayan / lumayan[last -1]"
+    // maka menggunakan rumus [ (C - X) / (C - B)]
+    // * note : X = nilai input
+    //          B = Nilai kedua pada variabel (array) lumayan = lumayan[1]
+    //          C = Batas atas / nilai terakhir pada variabel (array) lumayan = lumayan[last]
+    //
+    // * jika rumus ini dibuat kedalam bentuk grafik akan membentuk garis diagonal menurun
+    
     else if (inputf >= fulumayan[1] && inputf <= fulumayan[2])
     {
         return (fulumayan[2] - inputf) / (fulumayan[2] - fulumayan[1]);
     }
+    
+    // jika input lebih dari nilai batas atas variabel (array) lumayan
+    // maka akan langsung mengembalikan nilai 0 (false)
+
     else if (inputf > fulumayan[2])
     {
         return 0;
     }
+
+    // *note : penerapan fuzzyfikasi pada nilai keanggotaan lumayan akan membentuk grafik segitiga
+    //         grafik segitiga ini terbentuk karna variabel (array) lumayan hanya memiliki 3 nilai
+    //         untuk membuat grafik dengan bentuk jajar genjang maka tambahkan 1 nilai kedalam variabel (array) lumayan 
+    //         hingga variabel (array) lumayan memiliki 4 nilai di dalamnya
+    //         
+    //         kemudian tambahkan baris code untuk kondisi diantara isi array ke dua dan 3 seperti dibawah ini :
+    //         
+    //            else if (inputf >= fulumayan[2] && inputf <= fulumayan[3])
+    //            {
+    //                return 1;
+    //            }
+    //         
+    //         atau ubah isi function menjadi seperti dibawah ini:
+    // 
+    //            if (inputf < fulumayan[0])
+    //            {
+    //                return 0;
+    //            }
+    //
+    //            else if (inputf >= fulumayan[0] && inputf <= fulumayan[1])
+    //            {
+    //                return (inputf - fulumayan[0]) / (fulumayan[1] - fulumayan[0]);
+    //            }
+    //            
+    //            else if (inputf >= fulumayan[2] && inputf <= fulumayan[3])
+    //            {
+    //                return 1;
+    //            }
+    //
+    //            else if (inputf >= fulumayan[3] && inputf <= fulumayan[4])
+    //            {
+    //                return (fulumayan[4] - inputf) / (fulumayan[4] - fulumayan[3]);
+    //            }
+    //
+    //            else if (inputf > fulumayan[2])
+    //            {
+    //                return 0;
+    //            }
+
 }
+
+// fungsi fuzzyfikasi nilai input untuk nilai keanggotaan jauh
+
 float FuzzyfikasiInputJauh()
 {
+    // jika input bernilai lebih rendah dari nilai batas bawah variabel (array) jauh
+    // maka akan langsung mengembakikan nilai 0 (false)
+    
     if (inputf < fujauh[0])
     {
         return 0;
     }
+
+    // jika nilai lebih besar atau sama dengan nilai batas bawah variabel (array) jauh
+    // dan kurang dari atau sama dengan nilai kedua pada variable (array) jauh
+    // maka akan menggunakan rumus [ (X - A) / (B - A)]
+    // * note : X = nilai input
+    //          A = Batas bawah / nilai pertama pada variabel (array) lumayan = lumayan[0]
+    //          B = Nilai kedua pada variabel (array) lumayan = lumayan[1]
+    //
+    // * rumus ini jika dibuat kedalam bentuk grafik akan membentuk garis diagonal menanjak
+
     else if (inputf >= fujauh[0] && inputf <= fujauh[1])
     {
         return (inputf - fujauh[0]) / (fujauh[1] - fujauh[0]);
     }
+
+    // jika nilai input lebih besar dari nilai kedua pada variable (array) jauh
+    // maka akan langsung mengembalikan nilai 1 (true)
+
     else if (inputf > fujauh[1])
     {
         return 1;
     }
 }
+
+// fuzzifikasi nilai output ?
 float FoN()
 {
     if (outputf < fylambat[1])
@@ -123,15 +222,21 @@ float FoP()
         return 1;
     }
 }
+
 void implikasi()
 {
     // sesuai dengan rule
     //  if deket then lambat
+
     a1 = 100 - (FuzzyfikasiInputDekat() * (fylambat[2] - fylambat[1]));
+    
     // if lumayan then sedang
+    
     b1a = 20 + (FuzzyfikasiInputLumayan() * (fysedang[1] - fysedang[0]));
     b1b = 235 - (FuzzyfikasiInputLumayan() * (fysedang[2] - fysedang[1]));
+    
     // if jauh then cepat
+    
     c1 = 155 + (FuzzyfikasiInputJauh() * (fycepat[1] - fycepat[0]));
 }
 void luas_deffuzzy()
