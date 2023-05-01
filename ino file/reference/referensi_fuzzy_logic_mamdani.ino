@@ -1,15 +1,17 @@
 #include <math.h>
 float A, B;
 int sel_;
-float a1, b1a, b1b, c1;
+float drajatKeanggotaanLambat;                              // variabel drajat keanggotaan nilai output lambat
+float drajatKeanggotaanSedang1, drajatKeanggotaanSedang2;   // variabel drajat keanggotaan nilai output sedang
+float drajatKeanggotaanCepat;                               // variabel drajat keanggotaan nilai output cepat
 float L1, L2, L3, L4, L5, L6, L7;
 float M1, M2, M3, M4, M5, M6, M7;
-float fudeket[4] = {0, 0, 10, 100};
-float fulumayan[3] = {50, 150, 250};
-float fujauh[4] = {200, 290, 300, 300};
-float fylambat[3] = {0, 0, 100};
-float fysedang[3] = {20, 127.5, 235};
-float fycepat[3] = {155, 255, 255};
+float fudeket[4] = {0, 0, 10, 100};     // nilai keanggotaan input dekat
+float fulumayan[3] = {50, 150, 250};    // nilai keanggotaan input lumayang
+float fujauh[4] = {200, 290, 300, 300}; // nilai keanggotaan input jauh
+float fylambat[3] = {0, 0, 100};        // nilai keanggotaan output lambat
+float fysedang[3] = {20, 127.5, 235};   // nilai keanggotaan output sedang
+float fycepat[3] = {155, 255, 255};     // nilai keanggotaan output cepat
 float inputf, outputf;
 
 // fungsi fuzzyfikasi nilai input untuk nilai keanggotaan dekat
@@ -228,27 +230,45 @@ void implikasi()
     // sesuai dengan rule
     //  if deket then lambat
 
-    a1 = 100 - (FuzzyfikasiInputDekat() * (fylambat[2] - fylambat[1]));
+    drajatKeanggotaanLambat = fylambat[2] - (FuzzyfikasiInputDekat() * (fylambat[2] - fylambat[1]));
     
     // if lumayan then sedang
     
-    b1a = 20 + (FuzzyfikasiInputLumayan() * (fysedang[1] - fysedang[0]));
-    b1b = 235 - (FuzzyfikasiInputLumayan() * (fysedang[2] - fysedang[1]));
+    drajatKeanggotaanSedang1 = fysedang[0] + (FuzzyfikasiInputLumayan() * (fysedang[1] - fysedang[0]));
+    drajatKeanggotaanSedang2 = fysedang[3] - (FuzzyfikasiInputLumayan() * (fysedang[2] - fysedang[1]));
     
     // if jauh then cepat
     
-    c1 = 155 + (FuzzyfikasiInputJauh() * (fycepat[1] - fycepat[0]));
+    drajatKeanggotaanCepat = fycepat[0] + (FuzzyfikasiInputJauh() * (fycepat[1] - fycepat[0]));
+
+    // code diatas merupakan rumus untuk nilai keanggotaan output
+    // dengan rumus sebagai berikut :
+    // keanggotaan lambat           = (C - X) / (C - B)
+    // keanggotaan sedang pertama   = (X - A) / (B - A)
+    // keanggotaan sedang kedua     = (C - X) / (C - B)
+    // keanggotaan cepat            = (X - A) / (B - A)
+    //
+    // penulisan code juga bisa ditulis seperti di bawah ini
+    //
+    // drajatKeanggotaanLambat = ((fylambat[2] - FuzzyfikasiInputDekat()) / (fylambat[2] - fylambat[1]));
+    //
+    // drajatKeanggotaanSedang1 = ((FuzzyfikasiInputLumayan() - fysedang[0]) / (fysedang[1] - fysedang[0]));
+    // drajatKeanggotaanSedang2 = ((fysedang[2] - FuzzyfikasiInputLumayan()) / (fysedang[2] - fysedang[1]));
+    //
+    // drajatKeanggotaanCepat = ((FuzzyfikasiInputJauh() - fycepat[0]) / (fycepat[1] - fycepat[0]));
 }
+
+
 void luas_deffuzzy()
 {
     implikasi();
-    L1 = ((fylambat[2] - a1) * FuzzyfikasiInputDekat()) / 2;  //= 15.432222
-    L2 = (a1 - fylambat[0]) * FuzzyfikasiInputDekat();        // = 24.69155
-    L3 = ((b1a - fysedang[0]) * FuzzyfikasiInputLumayan()) / 2; // = 0
-    L4 = ((fysedang[2] - b1b) * FuzzyfikasiInputLumayan()) / 2; // = 0
-    L5 = (b1b - b1a) * FuzzyfikasiInputLumayan();               // = 0
-    L6 = ((c1 - fycepat[0]) * FuzzyfikasiInputJauh()) / 2;   // = 0
-    L7 = (fycepat[2] - c1) * FuzzyfikasiInputJauh();         // = 0
+    L1 = ((fylambat[2] - drajatKeanggotaanLambat) * FuzzyfikasiInputDekat()) / 2;  //= 15.432222
+    L2 = (drajatKeanggotaanLambat - fylambat[0]) * FuzzyfikasiInputDekat();        // = 24.69155
+    L3 = ((drajatKeanggotaanSedang1 - fysedang[0]) * FuzzyfikasiInputLumayan()) / 2; // = 0
+    L4 = ((fysedang[2] - drajatKeanggotaanSedang2) * FuzzyfikasiInputLumayan()) / 2; // = 0
+    L5 = (drajatKeanggotaanSedang2 - drajatKeanggotaanSedang1) * FuzzyfikasiInputLumayan();               // = 0
+    L6 = ((drajatKeanggotaanCepat - fycepat[0]) * FuzzyfikasiInputJauh()) / 2;   // = 0
+    L7 = (fycepat[2] - drajatKeanggotaanCepat) * FuzzyfikasiInputJauh();         // = 0
 }
 float f(float x)
 {
@@ -265,6 +285,7 @@ float f(float x)
         return A * x;
     }
 }
+
 /*Function deFuzzyfikasiInputDekatition to perform integration by Simpson's 1/3rd Rule */
 float simpsons(float f(float x), float a, float b, float n)
 {
@@ -304,32 +325,33 @@ float fx(float limd, float limu, float a, float b, int sel)
     return integral_new;
 }
 /*
-  (fylambat[2]-pwm)/fylambat[2]-fylambat[0] untuk a1 <= pwm <= 100
-  FuzzyfikasiInputDekat() untuk pwm < a1
-  (pwm-20)/127.5-20 untuk 20 <= pwm <= b1a
-  (235-pwm)/235-1275 untuk b1b <= pwm <= 235
-  0 untuk b1a < pwm > b1b
-  (pwm-155)/255-155 untuk 155 <= pwm <= c1
-  0 untuk pwm > c1
+  (fylambat[2]-pwm)/fylambat[2]-fylambat[0] untuk drajatKeanggotaanLambat <= pwm <= 100
+  FuzzyfikasiInputDekat() untuk pwm < drajatKeanggotaanLambat
+  (pwm-20)/127.5-20 untuk 20 <= pwm <= drajatKeanggotaanSedang1
+  (235-pwm)/235-1275 untuk drajatKeanggotaanSedang2 <= pwm <= 235
+  0 untuk drajatKeanggotaanSedang1 < pwm > drajatKeanggotaanSedang2
+  (pwm-155)/255-155 untuk 155 <= pwm <= drajatKeanggotaanCepat
+  0 untuk pwm > drajatKeanggotaanCepat
 */
 void moment()
 {
     luas_deffuzzy();
-    // M1 = ∫ ((100-x)/100)x dx ==================> limd a1 dan limup 100
-    M1 = fx(a1, fylambat[2], fylambat[2], (fylambat[2] - fylambat[0]), 1);
-    // M2 = ∫ 0.555556x dx ==================> limd 0 dan limup a1
-    M2 = fx(fylambat[0], a1, FuzzyfikasiInputDekat(), 0, 0);
-    // M3 = ∫ ((x-20)/107.5)x dx ==================> limd 20 dan limup b1a
-    M3 = fx(fysedang[0], b1a, fysedang[0], (fysedang[1] - fysedang[0]), 0);
-    // M4 = ∫ ((235-x)/107.5)x dx ==================> limd b1b dan limup 235
-    M4 = fx(b1b, fysedang[2], fysedang[2], (fysedang[2] - fysedang[1]), 1);
-    // M5 = ∫ 0 dx ==================> limd b1a dan limup b1b
-    M5 = fx(b1a, b1b, FuzzyfikasiInputLumayan(), 0, 0);
-    // M6 = ∫ ((x-155)/100)x dx ==================> limd 155 dan limup c1
-    M6 = fx(fycepat[0], c1, fycepat[0], (fycepat[2] - fycepat[0]), 0);
-    // M7 = ∫ 0 dx ==================> limd c1 dan limup 255
-    M7 = fx(c1, fycepat[2], FuzzyfikasiInputJauh(), 0, 0);
+    // M1 = ∫ ((100-x)/100)x dx ==================> limd drajatKeanggotaanLambat dan limup 100
+    M1 = fx(drajatKeanggotaanLambat, fylambat[2], fylambat[2], (fylambat[2] - fylambat[0]), 1);
+    // M2 = ∫ 0.555556x dx ==================> limd 0 dan limup drajatKeanggotaanLambat
+    M2 = fx(fylambat[0], drajatKeanggotaanLambat, FuzzyfikasiInputDekat(), 0, 0);
+    // M3 = ∫ ((x-20)/107.5)x dx ==================> limd 20 dan limup drajatKeanggotaanSedang1
+    M3 = fx(fysedang[0], drajatKeanggotaanSedang1, fysedang[0], (fysedang[1] - fysedang[0]), 0);
+    // M4 = ∫ ((235-x)/107.5)x dx ==================> limd drajatKeanggotaanSedang2 dan limup 235
+    M4 = fx(drajatKeanggotaanSedang2, fysedang[2], fysedang[2], (fysedang[2] - fysedang[1]), 1);
+    // M5 = ∫ 0 dx ==================> limd drajatKeanggotaanSedang1 dan limup drajatKeanggotaanSedang2
+    M5 = fx(drajatKeanggotaanSedang1, drajatKeanggotaanSedang2, FuzzyfikasiInputLumayan(), 0, 0);
+    // M6 = ∫ ((x-155)/100)x dx ==================> limd 155 dan limup drajatKeanggotaanCepat
+    M6 = fx(fycepat[0], drajatKeanggotaanCepat, fycepat[0], (fycepat[2] - fycepat[0]), 0);
+    // M7 = ∫ 0 dx ==================> limd drajatKeanggotaanCepat dan limup 255
+    M7 = fx(drajatKeanggotaanCepat, fycepat[2], FuzzyfikasiInputJauh(), 0, 0);
 }
+
 float deffuzzyfikasi()
 {
     moment();
