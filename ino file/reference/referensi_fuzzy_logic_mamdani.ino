@@ -12,6 +12,7 @@ float fysedang[3] = {20, 127.5, 235};
 float fycepat[3] = {155, 255, 255};
 float inputf, outputf;
 
+
 float FuzzyfikasiInputDekat()
 {
     // jika nilai input kurang dari batas bawah variabel dekat
@@ -39,7 +40,7 @@ float FuzzyfikasiInputDekat()
         return 0;
     }
 }
-float FiZ()
+float FuzzyfikasiInputLumayan()
 {
     if (inputf < fulumayan[0])
     {
@@ -58,7 +59,7 @@ float FiZ()
         return 0;
     }
 }
-float FiP()
+float FuzzyfikasiInputJauh()
 {
     if (inputf < fujauh[0])
     {
@@ -128,21 +129,21 @@ void implikasi()
     //  if deket then lambat
     a1 = 100 - (FuzzyfikasiInputDekat() * (fylambat[2] - fylambat[1]));
     // if lumayan then sedang
-    b1a = 20 + (FiZ() * (fysedang[1] - fysedang[0]));
-    b1b = 235 - (FiZ() * (fysedang[2] - fysedang[1]));
+    b1a = 20 + (FuzzyfikasiInputLumayan() * (fysedang[1] - fysedang[0]));
+    b1b = 235 - (FuzzyfikasiInputLumayan() * (fysedang[2] - fysedang[1]));
     // if jauh then cepat
-    c1 = 155 + (FiP() * (fycepat[1] - fycepat[0]));
+    c1 = 155 + (FuzzyfikasiInputJauh() * (fycepat[1] - fycepat[0]));
 }
 void luas_deffuzzy()
 {
     implikasi();
     L1 = ((fylambat[2] - a1) * FuzzyfikasiInputDekat()) / 2;  //= 15.432222
     L2 = (a1 - fylambat[0]) * FuzzyfikasiInputDekat();        // = 24.69155
-    L3 = ((b1a - fysedang[0]) * FiZ()) / 2; // = 0
-    L4 = ((fysedang[2] - b1b) * FiZ()) / 2; // = 0
-    L5 = (b1b - b1a) * FiZ();               // = 0
-    L6 = ((c1 - fycepat[0]) * FiP()) / 2;   // = 0
-    L7 = (fycepat[2] - c1) * FiP();         // = 0
+    L3 = ((b1a - fysedang[0]) * FuzzyfikasiInputLumayan()) / 2; // = 0
+    L4 = ((fysedang[2] - b1b) * FuzzyfikasiInputLumayan()) / 2; // = 0
+    L5 = (b1b - b1a) * FuzzyfikasiInputLumayan();               // = 0
+    L6 = ((c1 - fycepat[0]) * FuzzyfikasiInputJauh()) / 2;   // = 0
+    L7 = (fycepat[2] - c1) * FuzzyfikasiInputJauh();         // = 0
 }
 float f(float x)
 {
@@ -218,11 +219,11 @@ void moment()
     // M4 = ∫ ((235-x)/107.5)x dx ==================> limd b1b dan limup 235
     M4 = fx(b1b, fysedang[2], fysedang[2], (fysedang[2] - fysedang[1]), 1);
     // M5 = ∫ 0 dx ==================> limd b1a dan limup b1b
-    M5 = fx(b1a, b1b, FiZ(), 0, 0);
+    M5 = fx(b1a, b1b, FuzzyfikasiInputLumayan(), 0, 0);
     // M6 = ∫ ((x-155)/100)x dx ==================> limd 155 dan limup c1
     M6 = fx(fycepat[0], c1, fycepat[0], (fycepat[2] - fycepat[0]), 0);
     // M7 = ∫ 0 dx ==================> limd c1 dan limup 255
-    M7 = fx(c1, fycepat[2], FiP(), 0, 0);
+    M7 = fx(c1, fycepat[2], FuzzyfikasiInputJauh(), 0, 0);
 }
 float deffuzzyfikasi()
 {
