@@ -174,7 +174,8 @@ float FuzzyfikasiInputJauh()
     }
 }
 
-// fuzzifikasi nilai output ?
+// fuzzifikasi nilai keanggotaan output dekat
+
 float FoN()
 {
     if (outputf < fylambat[1])
@@ -262,14 +263,19 @@ void implikasi()
 void luas_deffuzzy()
 {
     implikasi();
-    L1 = ((fylambat[2] - drajatKeanggotaanLambat) * FuzzyfikasiInputDekat()) / 2;  //= 15.432222
-    L2 = (drajatKeanggotaanLambat - fylambat[0]) * FuzzyfikasiInputDekat();        // = 24.69155
-    L3 = ((drajatKeanggotaanSedang1 - fysedang[0]) * FuzzyfikasiInputLumayan()) / 2; // = 0
-    L4 = ((fysedang[2] - drajatKeanggotaanSedang2) * FuzzyfikasiInputLumayan()) / 2; // = 0
-    L5 = (drajatKeanggotaanSedang2 - drajatKeanggotaanSedang1) * FuzzyfikasiInputLumayan();               // = 0
-    L6 = ((drajatKeanggotaanCepat - fycepat[0]) * FuzzyfikasiInputJauh()) / 2;   // = 0
-    L7 = (fycepat[2] - drajatKeanggotaanCepat) * FuzzyfikasiInputJauh();         // = 0
+    L1 = ((fylambat[2] - drajatKeanggotaanLambat) * FuzzyfikasiInputDekat()) / 2;           //= 15.432222
+    L2 = (drajatKeanggotaanLambat - fylambat[0]) * FuzzyfikasiInputDekat();                 // = 24.69155
+    L3 = ((drajatKeanggotaanSedang1 - fysedang[0]) * FuzzyfikasiInputLumayan()) / 2;        // = 0
+    L4 = ((fysedang[2] - drajatKeanggotaanSedang2) * FuzzyfikasiInputLumayan()) / 2;        // = 0
+    L5 = (drajatKeanggotaanSedang2 - drajatKeanggotaanSedang1) * FuzzyfikasiInputLumayan(); // = 0
+    L6 = ((drajatKeanggotaanCepat - fycepat[0]) * FuzzyfikasiInputJauh()) / 2;              // = 0
+    L7 = (fycepat[2] - drajatKeanggotaanCepat) * FuzzyfikasiInputJauh();                    // = 0
+
+    /* 
+    Variabel L merupakan Luas dari nilai keanggotaan yang didapat
+    */
 }
+
 float f(float x)
 {
     if (B > 0 && sel_ == 0)
