@@ -135,14 +135,8 @@ void fuzzifikasiSuhuPanas(){
     return (suhu - fuzzyPanas[1]) / (fuzzyPanas[1] - fuzzyPanas[0]);
   }
 
-  // if x >= B && x <= C
-  else if (suhu >= fuzzyPanas[1] && suhu <= fuzzyPanas[2])
-  {
-    return 1;
-  }
-
-  // if x >= D
-  else if (suhu > fuzzyPanas[3])
+  // if x >= B
+  else if (suhu > fuzzyPanas[1])
   {
     return 1;
   }
@@ -158,11 +152,7 @@ void fuzzifikasiSuhuPanas(){
   dan nilai suhu kurang dari atau sama dengan nilai fuzzyPanas [1] = 32
   maka nilai keanggotaan fuzzyPanas = (x - b) / (b - a)
 
-  jika nilai input suhu lebih dari atau sama dengan nilai fuzzyPanas[1] = 32 
-  dan nilai suhu kurang dari atau sama dengan nilai fuzzyPanas [2] = 40
-  maka nilai keanggotaan fuzzyPanas = 1
-
-  jika nilai input suhu lebih dari nilai fuzzyPanas[3] = 40
+  jika nilai input suhu lebih dari nilai fuzzyPanas[1] = 32
   maka nilai keanggotaan fuzzyPanas = 1
   */
 }
@@ -201,6 +191,102 @@ void fuzzyfikasiPhRendah(){
 
   jika nilai input pH lebih dari nilai fuzzyRendah[3] = 6
   maka nilai keanggotaan fuzzyRendah = 0
+  */
+
+}
+
+void fuzzyfikasiPhSedang(){
+
+  // if x < A
+  if (pH < fuzzyPhSedang[0])
+  {
+    return 0;
+  }
+  
+  // if x >= A && x <= B
+  else if (pH >= fuzzyPhSedang[0] && pH <= fuzzyPhSedang[1])
+  {
+    return ((pH - fuzzyPhSedang[1]) / (fuzzyPhSedang[1] - fuzzyPhSedang[0]));
+  }
+
+  // if x >= B && x <= C
+  else if (pH >= fuzzyPhSedang[1] && pH <= fuzzyPhSedang[2])
+  {
+    return 1;
+  }
+
+  // if x >= C && x <= D
+  else if (pH >= fuzzyPhSedang[2] && pH <= fuzzyPhSedang[3])
+  {
+    return ((fuzzyPhSedang[3] - pH) / (fuzzyPhSedang[3] - fuzzyPhSedang[2]));
+  }
+
+  // if x > D
+  else if (pH > fuzzyPhSedang[3])
+  {
+    return 0;
+  }
+  
+  /*
+  fungsi untuk merubah nilai input pH 
+  menjadi nilai keanggotaan fuzzy Sedang
+
+  jika nilai input pH kurang dari nilai fuzzyPhSedang[0] = 5
+  maka nilai keanggotaan fuzzyPhSedang = 0
+
+  jika nilai input pH lebih dari atau sama dengan nilai fuzzyPhSedang[0] = 5 
+  dan nilai pH kurang dari atau sama dengan nilai fuzzyPhSedang [1] = 6
+  maka nilai keanggotaan fuzzyPhSedang = (x - b) / (b - a)
+
+  jika nilai input pH lebih dari atau sama dengan nilai fuzzyPhSedang[1] = 6 
+  dan nilai pH kurang dari atau sama dengan nilai fuzzyPhSedang [2] = 7
+  maka nilai keanggotaan fuzzyPhSedang = 1
+
+  jika nilai input pH lebih dari atau sama dengan nilai fuzzyPhSedang[2] = 7 
+  dan nilai pH kurang dari atau sama dengan nilai fuzzyPhSedang [3] = 7.5
+  maka nilai keanggotaan fuzzyPhSedang = (d - x) / (d - b)
+
+
+  jika nilai input pH lebih dari nilai fuzzyPhSedang[3] = 7.5
+  maka nilai keanggotaan fuzzyPhSedang = 0
+  */
+
+}
+
+void fuzzyfikasiPhTinggi(){
+
+  // if x < A
+  if (pH < fuzzyTinggi[0])
+  {
+    return 0;
+  }
+  
+  // if x >= A && x <= B
+  else if (pH >= fuzzyTinggi[0] && pH <= fuzzyTinggi[1])
+  {
+    return ((pH - fuzzyTinggi[1]) / (fuzzyTinggi[1] - fuzzyTinggi[0]));
+  }
+
+  // if x > D
+  else if (pH > fuzzyTinggi[1])
+  {
+    return 1;
+  }
+  
+  /*
+  fungsi untuk merubah nilai input pH 
+  menjadi nilai keanggotaan fuzzy Tinggi
+
+  jika nilai input pH kurang dari nilai fuzzyTinggi[0] = 7 
+  maka nilai keanggotaan fuzzyTinggi = 0
+
+  jika nilai input pH lebih dari atau sama dengan nilai fuzzyTinggi[0] = 7 
+  dan nilai pH kurang dari atau sama dengan nilai fuzzyTinggi [1] = 7.5
+  maka nilai keanggotaan fuzzyTinggi = (d - x) / (d - b)
+
+
+  jika nilai input pH lebih dari nilai fuzzyTinggi[1] = 7.5
+  maka nilai keanggotaan fuzzyTinggi = 0
   */
 
 }
