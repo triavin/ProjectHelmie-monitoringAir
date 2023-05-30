@@ -1,0 +1,38 @@
+[System]
+Name='test fuzzy'
+Type='mamdani'
+Version=2.0
+NumInputs=2
+NumOutputs=1
+NumRules=0
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='centroid'
+
+[Input1]
+Name='Suhu'
+Range=[0 40]
+NumMFs=3
+MF1='Rendah':'trapmf',[0 0 26 28]
+MF2='Sedang':'trapmf',[26 28 30 32]
+MF3='Tinggi':'trapmf',[30 32 40 40]
+
+[Input2]
+Name='pH'
+Range=[0 14]
+NumMFs=3
+MF1='Rendah':'trapmf',[0 0 5 6]
+MF2='Sedang':'trapmf',[5 6 7 7.5]
+MF3='Tinggi':'trapmf',[7 7.5 14 14]
+
+[Output1]
+Name='output1'
+Range=[0 1]
+NumMFs=3
+MF1='Pompa_1':'trimf',[-0.4 0 0.4]
+MF2='mf2':'trimf',[0.1 0.5 0.9]
+MF3='mf3':'trimf',[0.6 1 1.4]
+
+[Rules]
