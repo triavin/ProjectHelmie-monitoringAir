@@ -543,8 +543,64 @@ void kirimData(float nilai1, float nilai2){
 
 void kontrolRelay(float suhuUp, float suhuDown, float phUp, float phDown, float drain){
 
-    // buat untuk kondisi ph dan drain terlebihdahulu baru buat untuk kipas dan suhu   
+    //  if phUp > 0
+    if (phUp > 0)
+    {
+        // hidupkan pompa drain
+        digitalWrite(relayPompaDrain, LOW);
+        delay(drain * 300);
+        digitalWrite(relayPompaDrain, HIGH);
 
+        // hidupkan pompa ph Up
+        digitalWrite(relayPompaPhUp, LOW);
+        delay(phUp * 300);
+        digitalWrite(relayPompaPhUp, HIGH);
+    }
+    
+    //  if phDown > 0
+    if (phDown > 0)
+    {
+        // hidupkan pompa drain
+        digitalWrite(relayPompaDrain, LOW);
+        delay(drain * 300);
+        digitalWrite(relayPompaDrain, HIGH);
+
+        // hidupkan pompa ph down
+        digitalWrite(relayPompaPhDown, LOW);
+        delay(phDown * 300);
+        digitalWrite(relayPompaPhDown, HIGH);
+    }
+
+    //  if suhuUp > 0
+    if (suhuUp > 0)
+    {
+        // hidupkan pompa suhu up dan kipas
+        digitalWrite(relayKipas, LOW);
+        digitalWrite(relayPompaSuhuUp, LOW);
+        delay(suhuUp * 300);
+        digitalWrite(relayPompaSuhuUp, HIGH);
+
+        // hidupkan kipas
+        delay(suhuUp * 1200);
+        digitalWrite(relayKipas, HIGH);
+    }
+
+    //  if suhuDown > 0
+    if (suhuDown > 0)
+    {
+        // hidupkan kipas
+        digitalWrite(relayKipas, LOW);
+        delay(suhuDown * 600);
+
+        // hidupkan pompa suhu down
+        digitalWrite(relayPompaSuhuDown, LOW);
+        delay(suhuDown * 300);
+        digitalWrite(relayPompaSuhuDown, HIGH);
+
+        // matikan kipas
+        delay(suhuDown * 300);
+        digitalWrite(relayKipas, HIGH);
+    }
 }
 
 void setup() {
@@ -595,9 +651,10 @@ void loop() {
   Serial.println(nilaiOutputDrain);
 
   // kirim data sensor ke DB
-  kirimData(suhu,pH)
+  kirimData(suhu,pH);
 
-
+  // jalankan fungsi kontrol relay
+  kontrolRelay(nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhUp, nilaiOutputPhDown, nilaiOutputDrain);
 
   // delay selama 60 detik
   delay(60000);
