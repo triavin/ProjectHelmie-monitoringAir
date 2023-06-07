@@ -42,7 +42,7 @@ float DrainOutKosong = 0;
 float DrainOutSedikit = 50;
 float DrainOutBanyak = 100;
 
-void fuzzifikasiSuhuDingin(){
+float fuzzifikasiSuhuDingin(){
 
   // if x < C 
   if (suhu < fuzzyDingin[2])
@@ -79,7 +79,7 @@ void fuzzifikasiSuhuDingin(){
   */
 }
 
-void fuzzifikasiSuhuSedang(){
+float fuzzifikasiSuhuSedang(){
 
   // if x < A
   if (suhu < fuzzySuhuSedang[0])
@@ -136,7 +136,7 @@ void fuzzifikasiSuhuSedang(){
   */
 }
 
-void fuzzifikasiSuhuPanas(){
+float fuzzifikasiSuhuPanas(){
 
   // if x < A 
   if (suhu < fuzzyPanas[0])
@@ -172,7 +172,7 @@ void fuzzifikasiSuhuPanas(){
   */
 }
 
-void fuzzyfikasiPhRendah(){
+float fuzzyfikasiPhRendah(){
 
   // if x < C
   if (pH < fuzzyRendah[2])
@@ -210,7 +210,7 @@ void fuzzyfikasiPhRendah(){
 
 }
 
-void fuzzyfikasiPhSedang(){
+float fuzzyfikasiPhSedang(){
 
   // if x < A
   if (pH < fuzzyPhSedang[0])
@@ -268,7 +268,7 @@ void fuzzyfikasiPhSedang(){
 
 }
 
-void fuzzyfikasiPhTinggi(){
+float fuzzyfikasiPhTinggi(){
 
   // if x < A
   if (pH < fuzzyTinggi[0])
@@ -306,11 +306,25 @@ void fuzzyfikasiPhTinggi(){
 
 }
 
+
+// fungsi untuk mencari nilai minimum dari hasil fuzzyfikasi
+float minimum(float nilai1, float nilai2){
+  if (nilai1 < nilai2){
+    return nilai1;
+  }
+  else if (nilai2 < nilai1){
+    return nilai2;
+  }
+  else {
+    return nilai1;
+  }
+}
+
 // implikasi aturan
 void implikasi(){
     
     // aturan untuk kondisi suhu dingin dan ph rendah
-    minimumNilaiR[0] = Min(fuzzifikasiSuhuDingin(), fuzzyfikasiPhRendah());
+    minimumNilaiR[0] = minimum(fuzzifikasiSuhuDingin(), fuzzyfikasiPhRendah());
     aturan[0][0] = tempOutUpBanyak;
     aturan[0][1] = tempOutDownKosong;
     aturan[0][2] = phOutUpBanyak;
@@ -318,7 +332,7 @@ void implikasi(){
     aturan[0][4] = DrainOutBanyak;
 
     // aturan untuk kondisi suhu dingin dan ph sedang
-    minimumNilaiR[1] = Min(fuzzifikasiSuhuDingin(), fuzzyfikasiPhSedang());
+    minimumNilaiR[1] = minimum(fuzzifikasiSuhuDingin(), fuzzyfikasiPhSedang());
     aturan[1][0] = tempOutUpBanyak;
     aturan[1][1] = tempOutDownKosong;
     aturan[1][2] = phOutUpKosong;
@@ -326,7 +340,7 @@ void implikasi(){
     aturan[1][4] = DrainOutKosong;
 
     // aturan untuk kondisi suhu dingin dan ph tinggi
-    minimumNilaiR[2] = Min(fuzzifikasiSuhuDingin(), fuzzyfikasiPhTinggi());
+    minimumNilaiR[2] = minimum(fuzzifikasiSuhuDingin(), fuzzyfikasiPhTinggi());
     aturan[2][0] = tempOutUpBanyak;
     aturan[2][1] = tempOutDownKosong;
     aturan[2][2] = phOutUpKosong;
@@ -334,7 +348,7 @@ void implikasi(){
     aturan[2][4] = DrainOutBanyak;
 
     // aturan untuk kondisi suhu sedang dan ph rendah
-    minimumNilaiR[3] = Min(fuzzifikasiSuhuSedang(), fuzzyfikasiPhRendah());
+    minimumNilaiR[3] = minimum(fuzzifikasiSuhuSedang(), fuzzyfikasiPhRendah());
     aturan[3][0] = tempOutUpKosong;
     aturan[3][1] = tempOutDownKosong;
     aturan[3][2] = phOutUpBanyak;
@@ -342,7 +356,7 @@ void implikasi(){
     aturan[3][4] = DrainOutBanyak;
 
     // aturan untuk kondisi suhu sedang dan ph sedang
-    minimumNilaiR[4] = Min(fuzzifikasiSuhuSedang(), fuzzyfikasiPhSedang());
+    minimumNilaiR[4] = minimum(fuzzifikasiSuhuSedang(), fuzzyfikasiPhSedang());
     aturan[4][0] = tempOutUpKosong;
     aturan[4][1] = tempOutDownKosong;
     aturan[4][2] = phOutUpKosong;
@@ -350,7 +364,7 @@ void implikasi(){
     aturan[4][4] = DrainOutKosong;
 
     // aturan untuk kondisi suhu sedang dan ph tinggi
-    minimumNilaiR[5] = Min(fuzzifikasiSuhuSedang(), fuzzyfikasiPhTinggi());
+    minimumNilaiR[5] = minimum(fuzzifikasiSuhuSedang(), fuzzyfikasiPhTinggi());
     aturan[5][0] = tempOutUpKosong;
     aturan[5][1] = tempOutDownKosong;
     aturan[5][2] = phOutUpBanyak;
@@ -358,7 +372,7 @@ void implikasi(){
     aturan[5][4] = DrainOutBanyak;
 
     // aturan untuk kondisi suhu panas dan ph rendah
-    minimumNilaiR[6] = Min(fuzzifikasiSuhuPanas(), fuzzyfikasiPhRendah());
+    minimumNilaiR[6] = minimum(fuzzifikasiSuhuPanas(), fuzzyfikasiPhRendah());
     aturan[6][0] = tempOutUpKosong;
     aturan[6][1] = tempOutDownSedikit;
     aturan[6][2] = phOutUpBanyak;
@@ -366,7 +380,7 @@ void implikasi(){
     aturan[6][4] = DrainOutBanyak;
 
     // aturan untuk kondisi suhu panas dan ph sedang
-    minimumNilaiR[7] = Min(fuzzifikasiSuhuPanas(), fuzzyfikasiPhSedang());
+    minimumNilaiR[7] = minimum(fuzzifikasiSuhuPanas(), fuzzyfikasiPhSedang());
     aturan[7][0] = tempOutUpKosong;
     aturan[7][1] = tempOutDownBanyak;
     aturan[7][2] = phOutUpKosong;
@@ -374,14 +388,15 @@ void implikasi(){
     aturan[7][4] = DrainOutKosong;
 
     // aturan untuk kondisi suhu panas dan ph tinggi
-    minimumNilaiR[8] = Min(fuzzifikasiSuhuPanas(), fuzzyfikasiPhTinggi());
-    aturan[0][0] = tempOutUpKosong;
-    aturan[0][1] = tempOutDownSedikit;
-    aturan[0][2] = phOutUpKosong;
-    aturan[0][3] = phOutDownBanyak;
-    aturan[0][4] = DrainOutBanyak;
+    minimumNilaiR[8] = minimum(fuzzifikasiSuhuPanas(), fuzzyfikasiPhTinggi());
+    aturan[8][0] = tempOutUpKosong;
+    aturan[8][1] = tempOutDownSedikit;
+    aturan[8][2] = phOutUpKosong;
+    aturan[8][3] = phOutDownBanyak;
+    aturan[8][4] = DrainOutBanyak;
     
 }
+
 
 
 void setup() {
