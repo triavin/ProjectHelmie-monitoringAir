@@ -1,0 +1,66 @@
+[System]
+Name='test rules fuzzy'
+Type='mamdani'
+Version=2.0
+NumInputs=2
+NumOutputs=5
+NumRules=1
+AndMethod='min'
+OrMethod='max'
+ImpMethod='min'
+AggMethod='max'
+DefuzzMethod='lom'
+
+[Input1]
+Name='Suhu'
+Range=[0 40]
+NumMFs=3
+MF1='Rendah':'trapmf',[0 0 26 28]
+MF2='Sedang':'trapmf',[26 28 30 32]
+MF3='Tinggi':'trapmf',[30 32 40 40]
+
+[Input2]
+Name='pH'
+Range=[0 14]
+NumMFs=3
+MF1='Rendah':'trapmf',[0 0 5 6]
+MF2='Sedang':'trapmf',[5 6 7 7.5]
+MF3='Tinggi':'trapmf',[7 7.5 14 14]
+
+[Output1]
+Name='Pompa1'
+Range=[0 100]
+NumMFs=2
+MF1='sedikit':'trimf',[0 0 60]
+MF2='banyak':'trimf',[40 100 100]
+
+[Output2]
+Name='Pompa2'
+Range=[0 100]
+NumMFs=2
+MF1='sedikit':'trimf',[0 0 60]
+MF2='banyak':'trimf',[40 100 100]
+
+[Output3]
+Name='Pompa3'
+Range=[0 100]
+NumMFs=2
+MF1='sedikit':'trimf',[0 0 60]
+MF2='banyak':'trimf',[40 100 100]
+
+[Output4]
+Name='Pompa4'
+Range=[0 100]
+NumMFs=2
+MF1='sedikit':'trimf',[0 0 60]
+MF2='banyak':'trimf',[40 100 100]
+
+[Output5]
+Name='Pompa5'
+Range=[0 100]
+NumMFs=2
+MF1='sedikit':'trimf',[0 0 60]
+MF2='banyak':'trimf',[40 100 100]
+
+[Rules]
+1 1, 1 0 0 0 0 (1) : 1
