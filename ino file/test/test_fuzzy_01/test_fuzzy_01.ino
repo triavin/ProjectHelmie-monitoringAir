@@ -515,6 +515,7 @@ float getNilaiPh(){
   // memasukan nilai hasil baca sensor ph kedalam variabel ph
   pH = Nilai_pH;
 }
+
 void setup() {
   // memulai serial communication pada rate 9600
   Serial.begin(9600);
@@ -527,6 +528,9 @@ void loop() {
   // menjalankan fungsi untuk mendapatkan nilai sensor
   getNilaiPh();
   getNilaiSuhu();
+
+  // menjalankan fungsi implikasi
+  implikasi();
 
   // menjalankan fungsi untuk mendapatkan nilai output hasil penerapan metode fuzzy logic
   nilaiOutputSuhuUp   = defuzzifikasiSuhuUp();
