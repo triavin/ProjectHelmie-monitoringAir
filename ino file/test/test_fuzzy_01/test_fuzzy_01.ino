@@ -3,6 +3,11 @@
 // variabel Input Sensor
 float suhu, pH;
 
+// variabel Untuk Defuzzyfikasi
+float nilaiPertama, nilaiKedua;
+float nilaiSuhuUp, nilaiSuhuDown;
+float nilaiPhUp, nilaiPhDown, nilaiDrain;
+
 // variable aturan dan implikasi
 float minimumNilaiR[9];
 float aturan[9][5];
@@ -397,6 +402,75 @@ void implikasi(){
     
 }
 
+// fungsi deffuzifikasi untuk nilai suhu up
+float defuzzifikasiSuhuUp(){
+
+  nilaiPertama = 0;
+  nilaiKedua = 0;
+
+  for(int i=0; i<9; i++){
+        nilaiPertama += aturan[i][0] * minimumNilaiR[i];
+        nilaiKedua += minimumNilaiR[i];
+    }
+
+    return nilaiPertama / nilaiKedua;
+}
+
+// fungsi deffuzifikasi untuk nilai suhu down
+float defuzzifikasiSuhuDown(){
+
+  nilaiPertama = 0;
+  nilaiKedua = 0;
+
+  for(int i=0; i<9; i++){
+        nilaiPertama += aturan[i][1] * minimumNilaiR[i];
+        nilaiKedua += minimumNilaiR[i];
+    }
+
+    return nilaiPertama / nilaiKedua;
+}
+
+// fungsi deffuzifikasi untuk nilai pH up
+float defuzzifikasiPhUp(){
+
+  nilaiPertama = 0;
+  nilaiKedua = 0;
+
+  for(int i=0; i<9; i++){
+        nilaiPertama += aturan[i][2] * minimumNilaiR[i];
+        nilaiKedua += minimumNilaiR[i];
+    }
+
+    return nilaiPertama / nilaiKedua;
+}
+
+// fungsi deffuzifikasi untuk nilai pH down
+float defuzzifikasiPhDown(){
+
+  nilaiPertama = 0;
+  nilaiKedua = 0;
+
+  for(int i=0; i<9; i++){
+        nilaiPertama += aturan[i][3] * minimumNilaiR[i];
+        nilaiKedua += minimumNilaiR[i];
+    }
+
+    return nilaiPertama / nilaiKedua;
+}
+
+// fungsi deffuzifikasi untuk nilai drain
+float defuzzifikasiSuhuUp(){
+
+  nilaiPertama = 0;
+  nilaiKedua = 0;
+
+  for(int i=0; i<9; i++){
+        nilaiPertama += aturan[i][4] * minimumNilaiR[i];
+        nilaiKedua += minimumNilaiR[i];
+    }
+
+    return nilaiPertama / nilaiKedua;
+}
 
 
 void setup() {
