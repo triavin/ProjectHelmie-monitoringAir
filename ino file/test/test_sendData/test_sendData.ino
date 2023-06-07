@@ -28,6 +28,6 @@ void kirimData(float nilaiSuhu, float nilaiPh)
 
 void loop()
 {
-    kirimData(suhu,ph)
+    kirimData(suhu,ph);
     delay(1000);
 }
