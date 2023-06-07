@@ -1,7 +1,24 @@
-#include <math.h>
+// include library sensor suhu
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+// setup untuk perangkat onewire (sensor DS18B20)
+#define ONE_WIRE_BUS 11
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensorSuhu(&oneWire);
+
+// inisialisasi variabel untuk sensor pH
+int Nilai_Sensor_pH;
+double Tegangan_Sensor_pH, pH_Step, Nilai_pH;
+double Tegangan_pH_4 = 3.036;
+double Tegangan_pH_7 = 2.63;
 
 // variabel Input Sensor
 float suhu, pH;
+
+// variabel hasil defuzzyfikasi
+float nilaiOutputSuhuUp, nilaiOutputSuhuDown;
+float nilaiOutputPhUp, nilaiOutputPhDown, nilaiOutputDrain;
 
 // variabel Untuk Defuzzyfikasi
 float nilaiPertama, nilaiKedua;
@@ -465,7 +482,7 @@ float defuzzifikasiPhDown(){
 }
 
 // fungsi deffuzifikasi untuk nilai drain
-float defuzzifikasiSuhuUp(){
+float defuzzifikasiDrain(){
 
   nilaiPertama = 0;
   nilaiKedua = 0;
@@ -478,13 +495,59 @@ float defuzzifikasiSuhuUp(){
     return nilaiPertama / nilaiKedua;
 }
 
+// fungsi untuk mendapatkan nilai suhu dari sensor
+float getNilaiSuhu(){
+  // mengirim permintaan untuk mendapatkan nilai temperatur sensor
+  sensorSuhu.requestTemperatures();
 
+  // memasukan nilai suhu yang didapat sensor kedalam variabel
+  suhu = sensorSuhu.getTempCByIndex(0);
+}
+
+// fungsi untuk mendapatkan nilai ph dari sensor
+float getNilaiPh(){
+  // membaca Nilai Sensor pH
+  Nilai_Sensor_pH = analogRead(A0);
+  Tegangan_Sensor_pH = Nilai_Sensor_pH * (5 / 1023.0) ;
+  pH_Step = (Tegangan_pH_4 - Tegangan_pH_7) / 3;
+  Nilai_pH = 7 + ((Tegangan_pH_7 - Tegangan_Sensor_pH) / pH_Step);
+
+  // memasukan nilai hasil baca sensor ph kedalam variabel ph
+  pH = Nilai_pH;
+}
 void setup() {
-  // put your setup code here, to run once:
+  // memulai serial communication pada rate 9600
+  Serial.begin(9600);
 
+  // setup untuk sensor suhu
+  sensorSuhu.begin();
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  // menjalankan fungsi untuk mendapatkan nilai sensor
+  getNilaiPh();
+  getNilaiSuhu();
 
+  // menjalankan fungsi untuk mendapatkan nilai output hasil penerapan metode fuzzy logic
+  nilaiOutputSuhuUp   = defuzzifikasiSuhuUp();
+  nilaiOutputSuhuDown = defuzzifikasiSuhuDown();
+  nilaiOutputPhUp     = defuzzifikasiPhUp();
+  nilaiOutputPhDown   = defuzzifikasiPhDown;
+  nilaiOutputDrain    = defuzzifikasiDrain();
+
+  // mencetak hasil output pada serial monitor
+  Serial.print("nilai output suhu up : ");
+  Serial.println(nilaiOutputSuhuUp);
+  Serial.print("nilai output suhu down : ");
+  Serial.println(nilaiOutputSuhuDown);
+  Serial.print("nilai output ph up : ");
+  Serial.println(nilaiOutputPhUp);
+  Serial.print("nilai output ph down : ");
+  Serial.println(nilaiOutputPhDown);
+  Serial.print("nilai output drain : ");
+  Serial.println(nilaiOutputDrain);
+
+  // delay selama 60 detik
+  delay(60000);
+  
 }
