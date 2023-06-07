@@ -47,6 +47,7 @@ float DrainOutKosong = 0;
 float DrainOutSedikit = 50;
 float DrainOutBanyak = 100;
 
+// fungsi untuk mengubah nilai input kedalam nilai keanggotaan suhu dingin
 float fuzzifikasiSuhuDingin(){
 
   // if x < C 
@@ -84,6 +85,7 @@ float fuzzifikasiSuhuDingin(){
   */
 }
 
+// fungsi untuk mengubah nilai input kedalam nilai keanggotaan suhu sedang
 float fuzzifikasiSuhuSedang(){
 
   // if x < A
@@ -141,6 +143,7 @@ float fuzzifikasiSuhuSedang(){
   */
 }
 
+// fungsi untuk mengubah nilai input kedalam nilai keanggotaan suhu panas
 float fuzzifikasiSuhuPanas(){
 
   // if x < A 
@@ -177,6 +180,7 @@ float fuzzifikasiSuhuPanas(){
   */
 }
 
+// fungsi untuk mengubah nilai input kedalam nilai keanggotaan ph rendah
 float fuzzyfikasiPhRendah(){
 
   // if x < C
@@ -215,6 +219,7 @@ float fuzzyfikasiPhRendah(){
 
 }
 
+// fungsi untuk mengubah nilai input kedalam nilai keanggotaan ph sedang
 float fuzzyfikasiPhSedang(){
 
   // if x < A
@@ -273,6 +278,7 @@ float fuzzyfikasiPhSedang(){
 
 }
 
+// fungsi untuk mengubah nilai input kedalam nilai keanggotaan ph tinggi
 float fuzzyfikasiPhTinggi(){
 
   // if x < A
