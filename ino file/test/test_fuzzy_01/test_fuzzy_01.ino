@@ -1,31 +1,46 @@
 #include <math.h>
+
+// variabel Input Sensor
+float suhu, pH;
+
+// variable aturan dan implikasi
+float minimumNilaiR[9];
+float aturan[9][5];
+
 // variabel untuk nilai keanggotaan suhu
-float drajatKeanggotaanDingin;
-float drajatKeanggotaanSuhuSedang1, drajatKeanggotaanSuhuSedang2;
-float drajatKeanggotaanPanas;
-float fuzzyDingin[4]      = {0, 26, 26, 28};
+float fuzzyDingin[4]      = {0, 0, 26, 28};
 float fuzzySuhuSedang[4]  = {26, 28, 30, 32};
 float fuzzyPanas[4]       = {30, 32, 40, 40};
 
 // vaiabel untuk nilai keanggotaan pH
-float drajatKeanggotaanRendah;
-float drajatKeanggotaanSedang1, drajatKeanggotaanSedang2;
-float drajatKeanggotaanTinggi;
 float fuzzyRendah[4]      = {0, 0 , 5, 6};
 float fuzzyPhSedang[4]    = {5, 6, 7, 7.5};
 float fuzzyTinggi[4]      = {7, 7.5, 14, 14};
 
-float suhu, pH;
+// variable output suhu Up
+float tempOutUpKosong = 0;
+float tempOutUpSedikit = 50;
+float tempOutUpBanyak = 100;
 
-void setup() {
-  // put your setup code here, to run once:
+// variable output suhu Down
+float tempOutDownKosong = 0;
+float tempOutDownSedikit = 50;
+float tempOutDownBanyak = 100;
 
-}
+// variable output pompa pH Up
+float phOutUpKosong = 0;
+float phOutUpSedikit = 50;
+float phOutUpBanyak = 100;
 
-void loop() {
-  // put your main code here, to run repeatedly:
+// variable output pompa pH Down
+float phOutDownKosong = 0;
+float phOutDownSedikit = 50;
+float phOutDownBanyak = 100;
 
-}
+// variable output pompa Drain
+float DrainOutKosong = 0;
+float DrainOutSedikit = 50;
+float DrainOutBanyak = 100;
 
 void fuzzifikasiSuhuDingin(){
 
@@ -288,5 +303,93 @@ void fuzzyfikasiPhTinggi(){
   jika nilai input pH lebih dari nilai fuzzyTinggi[1] = 7.5
   maka nilai keanggotaan fuzzyTinggi = 0
   */
+
+}
+
+// implikasi aturan
+void implikasi(){
+    
+    // aturan untuk kondisi suhu dingin dan ph rendah
+    minimumNilaiR[0] = Min(fuzzifikasiSuhuDingin(), fuzzyfikasiPhRendah());
+    aturan[0][0] = tempOutUpBanyak;
+    aturan[0][1] = tempOutDownKosong;
+    aturan[0][2] = phOutUpBanyak;
+    aturan[0][3] = phOutDownKosong;
+    aturan[0][4] = DrainOutBanyak;
+
+    // aturan untuk kondisi suhu dingin dan ph sedang
+    minimumNilaiR[1] = Min(fuzzifikasiSuhuDingin(), fuzzyfikasiPhSedang());
+    aturan[1][0] = tempOutUpBanyak;
+    aturan[1][1] = tempOutDownKosong;
+    aturan[1][2] = phOutUpKosong;
+    aturan[1][3] = phOutDownKosong;
+    aturan[1][4] = DrainOutKosong;
+
+    // aturan untuk kondisi suhu dingin dan ph tinggi
+    minimumNilaiR[2] = Min(fuzzifikasiSuhuDingin(), fuzzyfikasiPhTinggi());
+    aturan[2][0] = tempOutUpBanyak;
+    aturan[2][1] = tempOutDownKosong;
+    aturan[2][2] = phOutUpKosong;
+    aturan[2][3] = phOutDownBanyak;
+    aturan[2][4] = DrainOutBanyak;
+
+    // aturan untuk kondisi suhu sedang dan ph rendah
+    minimumNilaiR[3] = Min(fuzzifikasiSuhuSedang(), fuzzyfikasiPhRendah());
+    aturan[3][0] = tempOutUpKosong;
+    aturan[3][1] = tempOutDownKosong;
+    aturan[3][2] = phOutUpBanyak;
+    aturan[3][3] = phOutDownKosong;
+    aturan[3][4] = DrainOutBanyak;
+
+    // aturan untuk kondisi suhu sedang dan ph sedang
+    minimumNilaiR[4] = Min(fuzzifikasiSuhuSedang(), fuzzyfikasiPhSedang());
+    aturan[4][0] = tempOutUpKosong;
+    aturan[4][1] = tempOutDownKosong;
+    aturan[4][2] = phOutUpKosong;
+    aturan[4][3] = phOutDownKosong;
+    aturan[4][4] = DrainOutKosong;
+
+    // aturan untuk kondisi suhu sedang dan ph tinggi
+    minimumNilaiR[5] = Min(fuzzifikasiSuhuSedang(), fuzzyfikasiPhTinggi());
+    aturan[5][0] = tempOutUpKosong;
+    aturan[5][1] = tempOutDownKosong;
+    aturan[5][2] = phOutUpBanyak;
+    aturan[5][3] = phOutDownKosong;
+    aturan[5][4] = DrainOutBanyak;
+
+    // aturan untuk kondisi suhu panas dan ph rendah
+    minimumNilaiR[6] = Min(fuzzifikasiSuhuPanas(), fuzzyfikasiPhRendah());
+    aturan[6][0] = tempOutUpKosong;
+    aturan[6][1] = tempOutDownSedikit;
+    aturan[6][2] = phOutUpBanyak;
+    aturan[6][3] = phOutDownKosong;
+    aturan[6][4] = DrainOutBanyak;
+
+    // aturan untuk kondisi suhu panas dan ph sedang
+    minimumNilaiR[7] = Min(fuzzifikasiSuhuPanas(), fuzzyfikasiPhSedang());
+    aturan[7][0] = tempOutUpKosong;
+    aturan[7][1] = tempOutDownBanyak;
+    aturan[7][2] = phOutUpKosong;
+    aturan[7][3] = phOutDownKosong;
+    aturan[7][4] = DrainOutKosong;
+
+    // aturan untuk kondisi suhu panas dan ph tinggi
+    minimumNilaiR[8] = Min(fuzzifikasiSuhuPanas(), fuzzyfikasiPhTinggi());
+    aturan[0][0] = tempOutUpKosong;
+    aturan[0][1] = tempOutDownSedikit;
+    aturan[0][2] = phOutUpKosong;
+    aturan[0][3] = phOutDownBanyak;
+    aturan[0][4] = DrainOutBanyak;
+    
+}
+
+
+void setup() {
+  // put your setup code here, to run once:
+
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
 
 }
