@@ -1,0 +1,4 @@
+{
+    "board": "arduino:avr:uno",
+    "sketch": "ino file\\test\\test_fuzzy_01\\test_fuzzy_01.ino"
+}

@@ -1,0 +1,7 @@
+
+# HTID:21330707: DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES BELOW
+php_value display_errors 1
+RewriteEngine On
+# RewriteRule ^api/?$ data.php [NC,L]
+# RewriteRule ^([0-9]+)?$ data.php?id=$1 [NC,L]
+# DO NOT REMOVE OR MODIFY THIS LINE AND THE LINES ABOVE HTID:21330707:
