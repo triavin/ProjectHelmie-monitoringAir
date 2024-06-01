@@ -14,6 +14,9 @@ char *pass = "password wifi";
 char *server = "url web server";
 String url;
 
+// variable idDevice 
+String idDevice = "PT001";
+
 // inisialisasi variabel untuk sensor pH
 int nilaiSensorPh;
 double teganganSensorPh, phStep, nilaiPh;
@@ -30,7 +33,7 @@ const int relayPompaPhUp = 6;
 const int relayPompaPhDown = 7;
 const int relayPompaDrain = 8;
 const int relayKipas = 9;
-const int relay_7 = 10;
+// const int relay_7 = 10;
 
 // variabel hasil defuzzyfikasi
 float nilaiOutputSuhuUp, nilaiOutputSuhuDown;
@@ -603,6 +606,20 @@ void kontrolRelay(float suhuUp, float suhuDown, float phUp, float phDown, float 
     }
 }
 
+void printOutputToSerial(float suhuUp, float suhuDown, float phUp, float phDown, float drain){
+  // mencetak hasil output pada serial monitor
+  Serial.print("nilai output suhu up : ");
+  Serial.println(suhuUp);
+  Serial.print("nilai output suhu down : ");
+  Serial.println(suhuUp);
+  Serial.print("nilai output ph up : ");
+  Serial.println(phUp);
+  Serial.print("nilai output ph down : ");
+  Serial.println(phDown);
+  Serial.print("nilai output drain : ");
+  Serial.println(drain);
+}
+
 void setup() {
   // memulai serial communication pada rate 9600
   Serial.begin(9600);
@@ -620,7 +637,7 @@ void setup() {
   pinMode(relayPompaPhDown, OUTPUT);
   pinMode(relayPompaDrain, OUTPUT);
   pinMode(relayKipas, OUTPUT);
-  pinMode(relay_7, OUTPUT);
+  // pinMode(relay_7, OUTPUT);
 }
 
 void loop() {
@@ -639,16 +656,7 @@ void loop() {
   nilaiOutputDrain    = defuzzifikasiDrain();
 
   // mencetak hasil output pada serial monitor
-  Serial.print("nilai output suhu up : ");
-  Serial.println(nilaiOutputSuhuUp);
-  Serial.print("nilai output suhu down : ");
-  Serial.println(nilaiOutputSuhuDown);
-  Serial.print("nilai output ph up : ");
-  Serial.println(nilaiOutputPhUp);
-  Serial.print("nilai output ph down : ");
-  Serial.println(nilaiOutputPhDown);
-  Serial.print("nilai output drain : ");
-  Serial.println(nilaiOutputDrain);
+  printOutputToSerial(nilaiOutputPhUp, nilaiOutputSuhuDown, nilaiOutputPhUp, nilaiOutputPhDown);
 
   // kirim data sensor ke DB
   kirimData(suhu,pH);
