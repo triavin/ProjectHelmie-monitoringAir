@@ -4,18 +4,19 @@
 #include <DallasTemperature.h>
 
 // setup untuk perangkat onewire (sensor DS18B20)
-#define ONE_WIRE_BUS 11
+#define ONE_WIRE_BUS 12
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensorSuhu(&oneWire);
 
 // variabel ssid dan password wifi dan web server
-char *ssid = "ssid wifi";
-char *pass = "password wifi";
-char *server = "url web server";
+char *ssid = "Tuyul_plus";
+char *pass = "1q2w3e4r5t";
+char *server = "192.168.1.110";
+const int port = 8080;
 String url;
 
 // variable idDevice 
-char idDevice = "PT001";
+// char idDevice = "PT001";
 
 // inisialisasi variabel untuk sensor pH
 int nilaiSensorPh;
@@ -32,6 +33,16 @@ const int relayPompaSuhuDown = 5;
 const int relayPompaDrain = 6;
 const int relayPompaFill = 7;
 const int relayKipas = 8;
+const int relayThermoelectric = 9;
+
+// setup Output for LED Indicator
+const int ledWifiConnection = 10;
+const int ledServerConnection = 11;
+const int ledLostConnection = 13;
+
+// variable flag wifi & flag server connection
+int flagWifi;
+int flagServer;
 
 // variabel hasil defuzzyfikasi
 float nilaiOutputSuhuUp, nilaiOutputSuhuDown;
@@ -476,13 +487,22 @@ float getNilaiPh(){
   pH = nilaiPh;
 }
 
-void kirimData(float nilaiSuhu, float nilaiPh, char idDevice){
+void kirimData(float nilaiSuhu, float nilaiPh){
+    
+    // // mengirim Data sensor ke database
+    // String Url = "/testv2/insertdatasensor.php?";
+    // Url += "suhu="+String(Nilai_Suhu);
+    // Url += "&ph="+String(Nilai_pH);
+    
+    // client.print(String("GET ") + Url + "Http/1.1\r\n" +
+    //               "Host: " + host + "\r\n" +
+    //               "Connection: close\r\n\r\n")
 
     // menambahkan nilai input sensor kedalam variabel url yang akan di panggil
-    url = "/data_sensor.php?suhu=" + String(nilaiSuhu) + "&ph=" + String(nilaiPh);
+    url = "/testv2/api/create.php?suhu=" + String(nilaiSuhu) + "&ph=" + String(nilaiPh) + "&idDevice=" + "1";
 
     // mengakses webserver dengan fungsi GET
-    httpGet(server, url, 80);
+    httpGet(server, url, port);
 }
 
 void kontrolRelay(float suhuUp, float suhuDown, float phStabilizer){
@@ -497,7 +517,7 @@ void kontrolRelay(float suhuUp, float suhuDown, float phStabilizer){
         delay(1500);
         digitalWrite(relayPompaFill, LOW);
         delay(phStabilizer);
-        digitalWrite(relayPompaFill, HiGH);
+        digitalWrite(relayPompaFill, HIGH);
         delay(1500);
     }
     
@@ -533,8 +553,12 @@ void kontrolRelay(float suhuUp, float suhuDown, float phStabilizer){
     }
 }
 
-void printOutputToSerial(float suhuUp, float suhuDown, float phStabilizier){
+void printOutputToSerial(float suhu, float pH, float suhuUp, float suhuDown, float phStabilizier){
   // mencetak hasil output pada serial monitor
+  Serial.print("nilai output sensor suhu : ");
+  Serial.println(suhu);
+  Serial.print("nilai output sensor ph : ");
+  Serial.println(pH);
   Serial.print("nilai output suhu up : ");
   Serial.println(suhuUp);
   Serial.print("nilai output suhu down : ");
@@ -550,18 +574,47 @@ void setup() {
   // setup untuk sensor suhu
   sensorSuhu.begin();
 
-  // menghubungkan kejaringan wifi
-  setWifi(ssid, pass);
-
   // deklarasi pin output
   pinMode(relayPompaSuhuUp, OUTPUT);
   pinMode(relayPompaSuhuDown, OUTPUT);
   pinMode(relayPompaDrain, OUTPUT);
   pinMode(relayPompaFill, OUTPUT);
   pinMode(relayKipas, OUTPUT);
+  pinMode(ledLostConnection, OUTPUT);
+  pinMode(ledWifiConnection, OUTPUT);
+  pinMode(ledServerConnection, OUTPUT);
+
+  // initial LED indicator
+  digitalWrite(ledLostConnection, HIGH);
 }
 
 void loop() {
+  // cek status wifi
+  flagWifi = getWifiStatus();
+
+  if (flagWifi == 0 )
+  {
+    digitalWrite(ledWifiConnection, LOW);
+    digitalWrite(ledLostConnection, HIGH);
+    
+    // menghubungkan kejaringan wifi
+    setWifi(ssid, pass);
+    digitalWrite(ledWifiConnection, HIGH);
+    digitalWrite(ledLostConnection, LOW);
+  }
+
+  // cek status server
+  flagServer = getServerStatus(server, port);
+  
+  if (flagServer == 0)
+  {
+    digitalWrite(ledServerConnection, LOW);
+  } else
+  {
+    digitalWrite(ledServerConnection, HIGH);
+  }
+  
+  
   // menjalankan fungsi untuk mendapatkan nilai sensor
   getNilaiPh();
   getNilaiSuhu();
@@ -575,15 +628,15 @@ void loop() {
   nilaiOutputPhStabilizer      = defuzzifikasiPhStabilizer();
 
   // mencetak hasil output pada serial monitor
-  printOutputToSerial(nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
+  printOutputToSerial(suhu, pH, nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
 
   // kirim data sensor ke DB
-  kirimData(suhu,pH, idDevice);
+  kirimData(suhu, pH);
 
   // jalankan fungsi kontrol relay
   kontrolRelay(nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
 
   // delay selama 60 detik
-  delay(60000);
+  delay(600);
   
 }
