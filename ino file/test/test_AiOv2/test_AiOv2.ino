@@ -11,7 +11,7 @@ DallasTemperature sensorSuhu(&oneWire);
 // variabel ssid dan password wifi dan web server
 char *ssid = "Tuyul_plus";
 char *pass = "1q2w3e4r5t";
-char *server = "192.168.1.110";
+char *server = "192.168.1.109";
 const int port = 8080;
 String url;
 
@@ -584,14 +584,22 @@ void setup() {
   pinMode(ledWifiConnection, OUTPUT);
   pinMode(ledServerConnection, OUTPUT);
 
-  // initial LED indicator
-  digitalWrite(ledLostConnection, HIGH);
+  // //
+  // digitalWrite(relayPompaSuhuUp, HIGH);
+  // digitalWrite(relayPompaSuhuDown, HIGH);
+  // digitalWrite(relayPompaDrain, HIGH);
+  // digitalWrite(relayPompaFill, HIGH);
+  // digitalWrite(relayKipas, HIGH);
+  // // initial LED indicator
+  // digitalWrite(ledLostConnection, HIGH);
 }
 
 void loop() {
   // cek status wifi
   flagWifi = getWifiStatus();
 
+  Serial.print("status WiFi: ");
+  Serial.print(flagWifi);
   if (flagWifi == 0 )
   {
     digitalWrite(ledWifiConnection, LOW);
@@ -606,6 +614,8 @@ void loop() {
   // cek status server
   flagServer = getServerStatus(server, port);
   
+  Serial.print("status WiFi: ");
+  Serial.print(flagServer);
   if (flagServer == 0)
   {
     digitalWrite(ledServerConnection, LOW);
