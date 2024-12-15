@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . ' .\config\database.php';
+require_once __DIR__ . '\config\database.php';
 
 // Create a database connection
 $database = new Database();
@@ -115,7 +115,7 @@ generateNavbar('history.php');
 </head>
 <body>
     <div class="container mt-3">
-        <h2 class="text-center mb-2">Sensor Data Table</h2>
+        <h2 class="text-center mb-2">Data Sensor</h2>
         <div id="sensor-data" class="table-responsive">
             <?php fetchSensorData($db, $limit, $offset,$idDevice); ?>
         </div>
