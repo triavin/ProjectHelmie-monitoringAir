@@ -1,4 +1,5 @@
-// include library sensor suhu
+// include library
+#include <KRwifi.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
@@ -7,27 +8,52 @@
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensorSuhu(&oneWire);
 
+// variabel ssid dan password wifi dan web server
+char *ssid = "Tuyul_plus";
+char *pass = "1q2w3e4r5t";
+char *server = "192.168.1.108";
+const int port = 8080;
+String url;
+String idDevice = "1";
+
 // inisialisasi variabel untuk sensor pH
-int Nilai_Sensor_pH;
-double Tegangan_Sensor_pH, pH_Step, Nilai_pH;
-double Tegangan_pH_4 = 3.036;
-double Tegangan_pH_7 = 2.63;
+int nilaiSensorPh;
+double teganganSensorPh, phStep, nilaiPh;
+double teganganPh4 = 3.036;
+double teganganPh7 = 2.63;
 
 // variabel Input Sensor
 float suhu, pH;
 
+// setup Output for Relay
+const int relayPompaSuhuUp = 5;
+const int relayPompaSuhuDown = 6;
+const int relayPompaDrain = 7;
+const int relayPompaFill = 8;
+const int relayKipas = 9;
+const int relayThermo = 10;
+
+// setup Output for LED Indicator
+const int ledWifiConnection = 12;
+const int ledServerConnection = 4;
+const int ledLostConnection = 13;
+
+// variable flag wifi & flag server connection
+int flagWifi;
+int flagServer;
+
 // variabel hasil defuzzyfikasi
 float nilaiOutputSuhuUp, nilaiOutputSuhuDown;
-float nilaiOutputPhUp, nilaiOutputPhDown, nilaiOutputDrain;
+float nilaiOutputPhStabilizer;
 
 // variabel Untuk Defuzzyfikasi
 float nilaiPertama, nilaiKedua;
 float nilaiSuhuUp, nilaiSuhuDown;
-float nilaiPhUp, nilaiPhDown, nilaiDrain;
+float nilaiPhStabilizer;
 
 // variable aturan dan implikasi
 float minimumNilaiR[9];
-float aturan[9][5];
+float aturan[9][3];
 
 // variabel untuk nilai keanggotaan suhu
 float fuzzyDingin[4]      = {0, 0, 26, 28};
@@ -49,20 +75,10 @@ float tempOutDownKosong = 0;
 float tempOutDownSedikit = 50;
 float tempOutDownBanyak = 100;
 
-// variable output pompa pH Up
-float phOutUpKosong = 0;
-float phOutUpSedikit = 50;
-float phOutUpBanyak = 100;
-
-// variable output pompa pH Down
-float phOutDownKosong = 0;
-float phOutDownSedikit = 50;
-float phOutDownBanyak = 100;
-
-// variable output pompa Drain
-float DrainOutKosong = 0;
-float DrainOutSedikit = 50;
-float DrainOutBanyak = 100;
+// variable output pompa pH Stabilizer
+float phOutStabilizerKosong = 0;
+float phOutStabilizerSedang = 50;
+float phOutStabilizerBanyak = 100;
 
 // fungsi untuk mengubah nilai input kedalam nilai keanggotaan suhu dingin
 float fuzzifikasiSuhuDingin(){
@@ -103,37 +119,19 @@ float fuzzifikasiSuhuDingin(){
 }
 
 // fungsi untuk mengubah nilai input kedalam nilai keanggotaan suhu sedang
-float fuzzifikasiSuhuSedang(){
-
-  // if x < A
-  if (suhu < fuzzySuhuSedang[0])
-  {
-    return 0;
-  }
-
-  // if x >= A && <= B
-  else if (suhu >= fuzzySuhuSedang[0] && suhu <= fuzzySuhuSedang[1])
-  {
-    return ((suhu - fuzzySuhuSedang[1]) / (fuzzySuhuSedang[1] - fuzzySuhuSedang[0]));
-  }
-
-  // if x >= B && x <= C
-  else if (suhu >= fuzzySuhuSedang[1] && suhu <= fuzzySuhuSedang[2])
-  {
-    return 1;
-  }
-
-  // if x >= C && x <= D
-  else if (suhu >= fuzzySuhuSedang[2] && suhu <= fuzzySuhuSedang[3])
-  {
-    return ((fuzzySuhuSedang[3] - suhu) / (fuzzySuhuSedang[3] - fuzzySuhuSedang[2]));
-  }
-  
-  // if x > D
-  else if (suhu > fuzzySuhuSedang[3])
-  {
-    return 0;
-  }
+float fuzzifikasiSuhuSedang() {
+    if (suhu < fuzzySuhuSedang[0]) {
+        return 0;
+    } else if (suhu >= fuzzySuhuSedang[0] && suhu <= fuzzySuhuSedang[1]) {
+        return (suhu - fuzzySuhuSedang[0]) / (fuzzySuhuSedang[1] - fuzzySuhuSedang[0]);  // Diperbaiki dari fuzzySuhuSedang[1]
+    } else if (suhu >= fuzzySuhuSedang[1] && suhu <= fuzzySuhuSedang[2]) {
+        return 1;
+    } else if (suhu >= fuzzySuhuSedang[2] && suhu <= fuzzySuhuSedang[3]) {
+        return (fuzzySuhuSedang[3] - suhu) / (fuzzySuhuSedang[3] - fuzzySuhuSedang[2]);
+    } else {
+        return 0;
+    }
+}
 
   /*
   fungsi untuk merubah nilai input suhu 
@@ -158,7 +156,6 @@ float fuzzifikasiSuhuSedang(){
   jika nilai input suhu lebih dari nilai fuzzySuhuSedang[3] = 32
   maka nilai keanggotaan fuzzySuhuSedang = 0
   */
-}
 
 // fungsi untuk mengubah nilai input kedalam nilai keanggotaan suhu panas
 float fuzzifikasiSuhuPanas(){
@@ -334,18 +331,13 @@ float fuzzyfikasiPhTinggi(){
 
 }
 
-
 // fungsi untuk mencari nilai minimum dari hasil fuzzyfikasi
-float minimum(float nilai1, float nilai2){
-  if (nilai1 < nilai2){
-    return nilai1;
-  }
-  else if (nilai2 < nilai1){
-    return nilai2;
-  }
-  else {
-    return nilai1;
-  }
+float minimum(float nilai1, float nilai2) {
+    if (nilai1 < nilai2) {
+        return nilai1;
+    } else {
+        return nilai2;
+    }
 }
 
 // implikasi aturan
@@ -355,77 +347,58 @@ void implikasi(){
     minimumNilaiR[0] = minimum(fuzzifikasiSuhuDingin(), fuzzyfikasiPhRendah());
     aturan[0][0] = tempOutUpBanyak;
     aturan[0][1] = tempOutDownKosong;
-    aturan[0][2] = phOutUpBanyak;
-    aturan[0][3] = phOutDownKosong;
-    aturan[0][4] = DrainOutBanyak;
+    aturan[0][2] = phOutStabilizerBanyak;
 
     // aturan untuk kondisi suhu dingin dan ph sedang
     minimumNilaiR[1] = minimum(fuzzifikasiSuhuDingin(), fuzzyfikasiPhSedang());
     aturan[1][0] = tempOutUpBanyak;
     aturan[1][1] = tempOutDownKosong;
-    aturan[1][2] = phOutUpKosong;
-    aturan[1][3] = phOutDownKosong;
-    aturan[1][4] = DrainOutKosong;
+    aturan[1][2] = phOutStabilizerKosong;
 
     // aturan untuk kondisi suhu dingin dan ph tinggi
     minimumNilaiR[2] = minimum(fuzzifikasiSuhuDingin(), fuzzyfikasiPhTinggi());
     aturan[2][0] = tempOutUpBanyak;
     aturan[2][1] = tempOutDownKosong;
-    aturan[2][2] = phOutUpKosong;
-    aturan[2][3] = phOutDownBanyak;
-    aturan[2][4] = DrainOutBanyak;
+    aturan[2][2] = phOutStabilizerBanyak;
 
     // aturan untuk kondisi suhu sedang dan ph rendah
     minimumNilaiR[3] = minimum(fuzzifikasiSuhuSedang(), fuzzyfikasiPhRendah());
     aturan[3][0] = tempOutUpKosong;
     aturan[3][1] = tempOutDownKosong;
-    aturan[3][2] = phOutUpBanyak;
-    aturan[3][3] = phOutDownKosong;
-    aturan[3][4] = DrainOutBanyak;
+    aturan[3][2] = phOutStabilizerBanyak;
 
     // aturan untuk kondisi suhu sedang dan ph sedang
     minimumNilaiR[4] = minimum(fuzzifikasiSuhuSedang(), fuzzyfikasiPhSedang());
     aturan[4][0] = tempOutUpKosong;
     aturan[4][1] = tempOutDownKosong;
-    aturan[4][2] = phOutUpKosong;
-    aturan[4][3] = phOutDownKosong;
-    aturan[4][4] = DrainOutKosong;
+    aturan[4][2] = phOutStabilizerKosong;
 
     // aturan untuk kondisi suhu sedang dan ph tinggi
     minimumNilaiR[5] = minimum(fuzzifikasiSuhuSedang(), fuzzyfikasiPhTinggi());
     aturan[5][0] = tempOutUpKosong;
     aturan[5][1] = tempOutDownKosong;
-    aturan[5][2] = phOutUpBanyak;
-    aturan[5][3] = phOutDownKosong;
-    aturan[5][4] = DrainOutBanyak;
+    aturan[5][2] = phOutStabilizerBanyak;
 
     // aturan untuk kondisi suhu panas dan ph rendah
     minimumNilaiR[6] = minimum(fuzzifikasiSuhuPanas(), fuzzyfikasiPhRendah());
     aturan[6][0] = tempOutUpKosong;
     aturan[6][1] = tempOutDownSedikit;
-    aturan[6][2] = phOutUpBanyak;
-    aturan[6][3] = phOutDownKosong;
-    aturan[6][4] = DrainOutBanyak;
+    aturan[6][2] = phOutStabilizerBanyak;
 
     // aturan untuk kondisi suhu panas dan ph sedang
     minimumNilaiR[7] = minimum(fuzzifikasiSuhuPanas(), fuzzyfikasiPhSedang());
     aturan[7][0] = tempOutUpKosong;
     aturan[7][1] = tempOutDownBanyak;
-    aturan[7][2] = phOutUpKosong;
-    aturan[7][3] = phOutDownKosong;
-    aturan[7][4] = DrainOutKosong;
+    aturan[7][2] = phOutStabilizerKosong;
 
     // aturan untuk kondisi suhu panas dan ph tinggi
     minimumNilaiR[8] = minimum(fuzzifikasiSuhuPanas(), fuzzyfikasiPhTinggi());
     aturan[8][0] = tempOutUpKosong;
     aturan[8][1] = tempOutDownSedikit;
-    aturan[8][2] = phOutUpKosong;
-    aturan[8][3] = phOutDownBanyak;
-    aturan[8][4] = DrainOutBanyak;
-    
+    aturan[8][2] = phOutStabilizerBanyak;
 }
 
-// fungsi deffuzifikasi untuk nilai suhu up
+// fungsi defuzifikasi untuk nilai suhu up
 float defuzzifikasiSuhuUp(){
 
   nilaiPertama = 0;
@@ -454,41 +427,13 @@ float defuzzifikasiSuhuDown(){
 }
 
 // fungsi deffuzifikasi untuk nilai pH up
-float defuzzifikasiPhUp(){
+float defuzzifikasiPhStabilizer(){
 
   nilaiPertama = 0;
   nilaiKedua = 0;
 
   for(int i=0; i<9; i++){
         nilaiPertama += aturan[i][2] * minimumNilaiR[i];
-        nilaiKedua += minimumNilaiR[i];
-    }
-
-    return nilaiPertama / nilaiKedua;
-}
-
-// fungsi deffuzifikasi untuk nilai pH down
-float defuzzifikasiPhDown(){
-
-  nilaiPertama = 0;
-  nilaiKedua = 0;
-
-  for(int i=0; i<9; i++){
-        nilaiPertama += aturan[i][3] * minimumNilaiR[i];
-        nilaiKedua += minimumNilaiR[i];
-    }
-
-    return nilaiPertama / nilaiKedua;
-}
-
-// fungsi deffuzifikasi untuk nilai drain
-float defuzzifikasiDrain(){
-
-  nilaiPertama = 0;
-  nilaiKedua = 0;
-
-  for(int i=0; i<9; i++){
-        nilaiPertama += aturan[i][4] * minimumNilaiR[i];
         nilaiKedua += minimumNilaiR[i];
     }
 
@@ -507,57 +452,184 @@ float getNilaiSuhu(){
 // fungsi untuk mendapatkan nilai ph dari sensor
 float getNilaiPh(){
   // membaca Nilai Sensor pH
-  Nilai_Sensor_pH = analogRead(A0);
-  Tegangan_Sensor_pH = Nilai_Sensor_pH * (5 / 1023.0) ;
-  pH_Step = (Tegangan_pH_4 - Tegangan_pH_7) / 3;
-  Nilai_pH = 7 + ((Tegangan_pH_7 - Tegangan_Sensor_pH) / pH_Step);
+  nilaiSensorPh = analogRead(A0);
+  teganganSensorPh = nilaiSensorPh * (5 / 1023.0) ;
+  phStep = (teganganPh4 - teganganPh7) / 3;
+  nilaiPh = 7 + ((teganganPh7 - teganganSensorPh) / phStep);
 
   // memasukan nilai hasil baca sensor ph kedalam variabel ph
-  pH = Nilai_pH;
+  pH = nilaiPh;
 }
 
+void kirimData(float nilaiSuhu, float nilaiPh, float nilaiOutputSuhuUp, float nilaiOutputSuhuDown, float nilaiOutputPhStabilizer){
+    // menambahkan nilai input sensor kedalam variabel url yang akan di panggil
+    url = "";
+    url = "/testv2/api/createDetail.php?suhu=" + String(nilaiSuhu)+ "&ph=" + String(nilaiPh) + "&idD=1" + "&osu=" + String(nilaiOutputSuhuUp)+ "&osd=" + String(nilaiOutputSuhuDown) + "&op=" + String(nilaiOutputPhStabilizer);
+    Serial.println("url : " + url);
+    // mengakses webserver dengan fungsi GET
+    httpGet(server, url, port);
+}
+
+void kontrolRelay(float suhuUp, float suhuDown, float phStabilizer){
+
+    // Kontrol Relay Pompa Drain dan Fill
+    if (phStabilizer > 0)
+    {
+        // hidupkan pompa ph Up
+        digitalWrite(relayPompaDrain, LOW);
+        delay(phStabilizer * 300);
+        digitalWrite(relayPompaDrain, HIGH);
+        delay(1500);
+        digitalWrite(relayPompaFill, LOW);
+        delay(phStabilizer * 300);
+        digitalWrite(relayPompaFill, HIGH);
+        delay(1500);
+    }
+    
+    // Kontrol Relay Pompa Suhu Up
+    if (suhuUp > 0)
+    {
+        // hidupkan pompa suhu up dan kipas
+        digitalWrite(relayKipas, LOW);
+        digitalWrite(relayPompaSuhuUp, LOW);
+        delay(suhuUp * 300);
+        digitalWrite(relayPompaSuhuUp, HIGH);
+
+        // hidupkan kipas
+        delay(suhuUp * 1200);
+        digitalWrite(relayKipas, HIGH);
+    }
+
+    // Kontrol Relay Pompa Suhu Down
+    if (suhuDown > 0)
+    {
+        // hidupkan kipas
+        digitalWrite(relayKipas, LOW);
+        delay(suhuDown * 600);
+
+        // hidupkan pompa suhu down
+        digitalWrite(relayPompaSuhuDown, LOW);
+        delay(suhuDown * 300);
+        digitalWrite(relayPompaSuhuDown, HIGH);
+
+        // matikan kipas
+        delay(suhuDown * 300);
+        digitalWrite(relayKipas, HIGH);
+    }
+}
+
+void printOutputToSerial(float suhu, float pH, float suhuUp, float suhuDown, float phStabilizier){
+  // mencetak hasil output pada serial monitor
+  Serial.print("nilai output sensor suhu : ");
+  Serial.println(suhu);
+  Serial.print("nilai output sensor ph : ");
+  Serial.println(pH);
+  Serial.print("nilai output suhu up : ");
+  Serial.println(suhuUp);
+  Serial.print("nilai output suhu down : ");
+  Serial.println(suhuUp);
+  Serial.print("nilai output ph stabilizer : ");
+  Serial.println(phStabilizier);
+}
+
+void checkWifiStatus(){
+  // cek status wifi
+  flagWifi = getWifiStatus();
+
+  Serial.print("status WiFi: ");
+  Serial.println(flagWifi);
+  if (flagWifi == 0 )
+  {
+    digitalWrite(ledWifiConnection, LOW);
+    digitalWrite(ledLostConnection, HIGH);
+    
+    // menghubungkan kejaringan wifi
+    setWifi(ssid, pass);
+    digitalWrite(ledWifiConnection, HIGH);
+    digitalWrite(ledLostConnection, LOW);
+  } else
+  {
+    digitalWrite(ledWifiConnection, HIGH);
+    digitalWrite(ledLostConnection, LOW);
+  }
+}
+
+void checkServerStatus(){
+  
+  // cek status server
+  flagServer = getServerStatus(server, port);
+  
+  Serial.print("status Server: ");
+  Serial.println(flagServer);
+  if (flagServer == 0)
+  {
+    digitalWrite(ledServerConnection, LOW);
+  } else
+  {
+    digitalWrite(ledServerConnection, HIGH);
+  }
+}
 void setup() {
   // memulai serial communication pada rate 9600
   Serial.begin(9600);
 
   // setup untuk sensor suhu
   sensorSuhu.begin();
+
+  // deklarasi pin output
+  pinMode(relayPompaSuhuUp, OUTPUT);
+  pinMode(relayPompaSuhuDown, OUTPUT);
+  pinMode(relayPompaDrain, OUTPUT);
+  pinMode(relayPompaFill, OUTPUT);
+  pinMode(relayKipas, OUTPUT);
+  pinMode(relayThermo, OUTPUT);
+  pinMode(ledLostConnection, OUTPUT);
+  pinMode(ledWifiConnection, OUTPUT);
+  pinMode(ledServerConnection, OUTPUT);
+
+   //
+   digitalWrite(relayPompaSuhuUp, HIGH);
+   digitalWrite(relayPompaSuhuDown, HIGH);
+   digitalWrite(relayPompaDrain, HIGH);
+   digitalWrite(relayPompaFill, HIGH);
+   digitalWrite(relayKipas, HIGH);
+   digitalWrite(relayThermo, HIGH);
+   // initial LED indicator
+   digitalWrite(ledLostConnection, HIGH);
+
+  // menghubungkan kejaringan wifi
+  setWifi(ssid, pass);
 }
 
 void loop() {
+  
+  checkWifiStatus();
+  checkServerStatus();
+  
   // menjalankan fungsi untuk mendapatkan nilai sensor
   getNilaiPh();
   getNilaiSuhu();
 
+  Serial.println("nilai suhu: " + String(suhu));
+  Serial.println("nilai pH: " + String(pH));
+  
   // menjalankan fungsi implikasi
   implikasi();
 
   // menjalankan fungsi untuk mendapatkan nilai output hasil penerapan metode fuzzy logic
-  nilaiOutputSuhuUp   = defuzzifikasiSuhuUp();
-  nilaiOutputSuhuDown = defuzzifikasiSuhuDown();
-  nilaiOutputPhUp     = defuzzifikasiPhUp();
-  nilaiOutputPhDown   = defuzzifikasiPhDown();
-  nilaiOutputDrain    = defuzzifikasiDrain();
+  nilaiOutputSuhuUp            = defuzzifikasiSuhuUp();
+  nilaiOutputSuhuDown          = defuzzifikasiSuhuDown();
+  nilaiOutputPhStabilizer      = defuzzifikasiPhStabilizer();
 
   // mencetak hasil output pada serial monitor
-  Serial.print("nilai suhu : ");
-  Serial.println(suhu);
-  Serial.print("nilai ph : ");
-  Serial.println(pH);
-  Serial.print("nilai output suhu up : ");
-  Serial.println(nilaiOutputSuhuUp);
-  Serial.print("nilai output suhu up : ");
-  Serial.println(nilaiOutputSuhuUp);
-  Serial.print("nilai output suhu down : ");
-  Serial.println(nilaiOutputSuhuDown);
-  Serial.print("nilai output ph up : ");
-  Serial.println(nilaiOutputPhUp);
-  Serial.print("nilai output ph down : ");
-  Serial.println(nilaiOutputPhDown);
-  Serial.print("nilai output drain : ");
-  Serial.println(nilaiOutputDrain);
+  printOutputToSerial(suhu, pH, nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
 
-  // delay selama 60 detik
-  delay(60000);
+  // kirim data sensor ke DB
+  kirimData(suhu, pH, nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
   
+  // jalankan fungsi kontrol relay
+  kontrolRelay(nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
+  
+  // delay selama 60 detik
+  delay(360000);
 }

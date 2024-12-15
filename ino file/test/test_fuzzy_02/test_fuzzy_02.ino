@@ -103,62 +103,77 @@ float fuzzifikasiSuhuDingin(){
 }
 
 // fungsi untuk mengubah nilai input kedalam nilai keanggotaan suhu sedang
-float fuzzifikasiSuhuSedang(){
+//float fuzzifikasiSuhuSedang(){
+//
+//  // if x < A
+//  if (suhu < fuzzySuhuSedang[0])
+//  {
+//    return 0;
+//  }
+//
+//  // if x >= A && <= B
+//  else if (suhu >= fuzzySuhuSedang[0] && suhu <= fuzzySuhuSedang[1])
+//  {
+//    return ((suhu - fuzzySuhuSedang[1]) / (fuzzySuhuSedang[1] - fuzzySuhuSedang[0]));
+//  }
+//
+//  // if x >= B && x <= C
+//  else if (suhu >= fuzzySuhuSedang[1] && suhu <= fuzzySuhuSedang[2])
+//  {
+//    return 1;
+//  }
+//
+//  // if x >= C && x <= D
+//  else if (suhu >= fuzzySuhuSedang[2] && suhu <= fuzzySuhuSedang[3])
+//  {
+//    return ((fuzzySuhuSedang[3] - suhu) / (fuzzySuhuSedang[3] - fuzzySuhuSedang[2]));
+//  }
+//  
+//  // if x > D
+//  else if (suhu > fuzzySuhuSedang[3])
+//  {
+//    return 0;
+//  }
+//
+//  /*
+//  fungsi untuk merubah nilai input suhu 
+//  menjadi nilai keanggotaan fuzzy dingin
+//
+//  jika nilai input suhu kurang dari nilai fuzzySuhuSedang[0] = 26 
+//  maka nilai keanggotaan fuzzySuhuSedang = 0
+//
+//  jika nilai input suhu lebih dari atau sama dengan nilai fuzzySuhuSedang[0] = 26 
+//  dan nilai suhu kurang dari atau sama dengan nilai fuzzySuhuSedang [1] = 28
+//  maka nilai keanggotaan fuzzySuhuSedang = (x - b) / (b - a)
+//
+//  jika nilai input suhu lebih dari atau sama dengan nilai fuzzySuhuSedang[1] = 28 
+//  dan nilai suhu kurang dari atau sama dengan nilai fuzzySuhuSedang [2] = 30
+//  maka nilai keanggotaan fuzzySuhuSedang = 1
+//
+//  jika nilai input suhu lebih dari atau sama dengan nilai fuzzySuhuSedang[2] = 30 
+//  dan nilai suhu kurang dari atau sama dengan nilai fuzzySuhuSedang [3] = 32
+//  maka nilai keanggotaan fuzzySuhuSedang = (d - x) / (d - b)
+//
+//
+//  jika nilai input suhu lebih dari nilai fuzzySuhuSedang[3] = 32
+//  maka nilai keanggotaan fuzzySuhuSedang = 0
+//  */
+//}
 
-  // if x < A
-  if (suhu < fuzzySuhuSedang[0])
-  {
-    return 0;
-  }
-
-  // if x >= A && <= B
-  else if (suhu >= fuzzySuhuSedang[0] && suhu <= fuzzySuhuSedang[1])
-  {
-    return ((suhu - fuzzySuhuSedang[1]) / (fuzzySuhuSedang[1] - fuzzySuhuSedang[0]));
-  }
-
-  // if x >= B && x <= C
-  else if (suhu >= fuzzySuhuSedang[1] && suhu <= fuzzySuhuSedang[2])
-  {
-    return 1;
-  }
-
-  // if x >= C && x <= D
-  else if (suhu >= fuzzySuhuSedang[2] && suhu <= fuzzySuhuSedang[3])
-  {
-    return ((fuzzySuhuSedang[3] - suhu) / (fuzzySuhuSedang[3] - fuzzySuhuSedang[2]));
-  }
-  
-  // if x > D
-  else if (suhu > fuzzySuhuSedang[3])
-  {
-    return 0;
-  }
-
-  /*
-  fungsi untuk merubah nilai input suhu 
-  menjadi nilai keanggotaan fuzzy dingin
-
-  jika nilai input suhu kurang dari nilai fuzzySuhuSedang[0] = 26 
-  maka nilai keanggotaan fuzzySuhuSedang = 0
-
-  jika nilai input suhu lebih dari atau sama dengan nilai fuzzySuhuSedang[0] = 26 
-  dan nilai suhu kurang dari atau sama dengan nilai fuzzySuhuSedang [1] = 28
-  maka nilai keanggotaan fuzzySuhuSedang = (x - b) / (b - a)
-
-  jika nilai input suhu lebih dari atau sama dengan nilai fuzzySuhuSedang[1] = 28 
-  dan nilai suhu kurang dari atau sama dengan nilai fuzzySuhuSedang [2] = 30
-  maka nilai keanggotaan fuzzySuhuSedang = 1
-
-  jika nilai input suhu lebih dari atau sama dengan nilai fuzzySuhuSedang[2] = 30 
-  dan nilai suhu kurang dari atau sama dengan nilai fuzzySuhuSedang [3] = 32
-  maka nilai keanggotaan fuzzySuhuSedang = (d - x) / (d - b)
-
-
-  jika nilai input suhu lebih dari nilai fuzzySuhuSedang[3] = 32
-  maka nilai keanggotaan fuzzySuhuSedang = 0
-  */
+float fuzzifikasiSuhuSedang() {
+    if (suhu < fuzzySuhuSedang[0]) {
+        return 0;
+    } else if (suhu >= fuzzySuhuSedang[0] && suhu <= fuzzySuhuSedang[1]) {
+        return (suhu - fuzzySuhuSedang[0]) / (fuzzySuhuSedang[1] - fuzzySuhuSedang[0]);  // Diperbaiki dari fuzzySuhuSedang[1]
+    } else if (suhu >= fuzzySuhuSedang[1] && suhu <= fuzzySuhuSedang[2]) {
+        return 1;
+    } else if (suhu >= fuzzySuhuSedang[2] && suhu <= fuzzySuhuSedang[3]) {
+        return (fuzzySuhuSedang[3] - suhu) / (fuzzySuhuSedang[3] - fuzzySuhuSedang[2]);
+    } else {
+        return 0;
+    }
 }
+
 
 // fungsi untuk mengubah nilai input kedalam nilai keanggotaan suhu panas
 float fuzzifikasiSuhuPanas(){
@@ -336,16 +351,12 @@ float fuzzyfikasiPhTinggi(){
 
 
 // fungsi untuk mencari nilai minimum dari hasil fuzzyfikasi
-float minimum(float nilai1, float nilai2){
-  if (nilai1 < nilai2){
-    return nilai1;
-  }
-  else if (nilai2 < nilai1){
-    return nilai2;
-  }
-  else {
-    return nilai1;
-  }
+float minimum(float nilai1, float nilai2) {
+    if (nilai1 < nilai2) {
+        return nilai1;
+    } else {
+        return nilai2;
+    }
 }
 
 // implikasi aturan
