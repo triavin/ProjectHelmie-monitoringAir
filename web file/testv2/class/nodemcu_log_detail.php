@@ -1,9 +1,29 @@
 <?php
 class Nodemcu_log_detail {
     private $conn;
-
+    
     public function __construct($db) {
         $this->conn = $db;
+    }
+    
+    public function createLogData($idDevice, $suhu, $ph) {
+        $query = "INSERT INTO dt_sensor (idDevice, suhu, ph) VALUES (?, ?, ?)";
+    
+        if ($stmt = $this->conn->prepare($query)) {
+            $stmt->bind_param("sdd", $idDevice, $suhu, $ph); // "idd" means integer, double, double
+    
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
+                return false;
+            }
+    
+            $stmt->close();
+        } else {
+            echo "Prepare failed: (" . $this->conn->errno . ") " . $this->conn->error;
+            return false;
+        }
     }
 
     public function createLogDataDetail($idDevice, $suhu, $ph, $outputSuhuDown, $outputSuhuUp, $outputPhStabilizer) {
@@ -26,7 +46,7 @@ class Nodemcu_log_detail {
             $stmt->bind_param("idddddiii", $idDevice, $suhu, $ph, $outputSuhuUp, $outputSuhuDown, $outputPhStabilizer, $statusRelaySuhuUp, $statusRelaySuhuDown, $statusRelayPhStabilizer);
 
             if ($stmt->execute()) {
-                return true;
+                // return true;
             } else {
                 echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
                 return false;
@@ -37,20 +57,19 @@ class Nodemcu_log_detail {
             echo "Prepare failed: (" . $this->conn->errno . ") " . $this->conn->error;
             return false;
         }
-    }
-    public function createLogData($idDevice, $suhu, $ph) {
+        
         $query = "INSERT INTO dt_sensor (idDevice, suhu, ph) VALUES (?, ?, ?)";
-
+    
         if ($stmt = $this->conn->prepare($query)) {
             $stmt->bind_param("sdd", $idDevice, $suhu, $ph); // "idd" means integer, double, double
-
+    
             if ($stmt->execute()) {
                 return true;
             } else {
                 echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
                 return false;
             }
-
+    
             $stmt->close();
         } else {
             echo "Prepare failed: (" . $this->conn->errno . ") " . $this->conn->error;

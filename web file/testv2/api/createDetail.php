@@ -19,22 +19,33 @@ $outputPhStabilizer = isset($_GET['op']) ? floatval($_GET['op']) : null;
 
 
 // Validate the parameters
-if ($idDevice !== null && $suhu !== null && $ph !== null) {
-    if ($nodemcu_log->createLogData($idDevice, $suhu, $ph)) {
-        echo $idDevice;
-        echo " Log data created successfully";
-    } else {
-        echo "Failed to create log data";
-    }
-} else {
-    echo "Invalid parameters";
-}
+// if ($idDevice !== null && $suhu !== null && $ph !== null) {
+//     if ($nodemcu_log->createLogData($idDevice, $suhu, $ph)) {
+//         echo $idDevice;
+//         echo " Log data created successfully ";
+//     } else {
+//         echo "Failed to create log data";
+//     }
+// } else {
+//     echo "Invalid parameters";
+// }
 
 // Validate the parameters
 if ($idDevice !== null && $suhu !== null && $ph !== null && $outputSuhuDown !== null && $outputSuhuUp !== null && $outputPhStabilizer !== null) {
     if ($nodemcu_log->createLogDataDetail($idDevice, $suhu, $ph, $outputSuhuDown, $outputSuhuUp, $outputPhStabilizer)) {
+        echo "ID Device : ";
         echo $idDevice;
-        echo "Log data created successfully";
+        echo " | Suhu : ";
+        echo $suhu;
+        echo " | pH : ";
+        echo $ph;
+        echo " | oSD : ";
+        echo $outputSuhuDown;
+        echo " | oSU : ";
+        echo $outputSuhuUp;
+        echo " | opH : ";
+        echo $outputPhStabilizer;
+        echo " | Log data created successfully";
     } else {
         echo "Failed to create log data";
     }
