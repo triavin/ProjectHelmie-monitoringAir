@@ -9,9 +9,9 @@ OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensorSuhu(&oneWire);
 
 // variabel ssid dan password wifi dan web server
-char *ssid = "Tuyul_plus";
+char *ssid = "Tuyul";
 char *pass = "1q2w3e4r5t";
-char *server = "192.168.1.108";
+char *server = "192.168.1.105";
 const int port = 8080;
 String url;
 String idDevice = "1";
@@ -470,6 +470,28 @@ void kirimData(float nilaiSuhu, float nilaiPh, float nilaiOutputSuhuUp, float ni
     httpGet(server, url, port);
 }
 
+void kirimDataV2(String url){
+    // menambahkan nilai input sensor kedalam variabel url yang akan di panggil
+    Serial.print("server : "); 
+    Serial.println(String(server));
+    Serial.println("Port : " + String(port));
+    Serial.print("Url : ");
+    Serial.println(url);
+    
+    // mengakses webserver dengan fungsi GET
+    //    httpGet(server, url, port);
+
+    // mengakses webserver dengan fungsi GET
+    Serial.println("Sending HTTP GET request...");
+    int result = httpGet(server, url, port);
+    if (result != 0) {
+        Serial.print("HTTP GET request failed with error code: ");
+        Serial.println(result);
+    } else {
+        Serial.println("HTTP GET request successful.");
+    }
+}
+
 void kontrolRelay(float suhuUp, float suhuDown, float phStabilizer){
 
     // Kontrol Relay Pompa Drain dan Fill
@@ -622,13 +644,17 @@ void loop() {
   nilaiOutputPhStabilizer      = defuzzifikasiPhStabilizer();
 
   // mencetak hasil output pada serial monitor
-  printOutputToSerial(suhu, pH, nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
+//  printOutputToSerial(suhu, pH, nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
 
   // kirim data sensor ke DB
-  kirimData(suhu, pH, nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
+//  kirimData(suhu, pH, nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
+
+  url = "/testv2/api/createDetail.php?suhu=" + String(suhu)+ "&ph=" + String(pH);
+  url = url + "&idD=2" + "&osu=" + String(nilaiOutputSuhuUp)+ "&osd=" + String(nilaiOutputSuhuDown) + "&op=" + String(nilaiOutputPhStabilizer);
+  kirimDataV2(url);
   
   // jalankan fungsi kontrol relay
-  kontrolRelay(nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
+//  kontrolRelay(nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
   
   // delay selama 60 detik
   delay(360000);
