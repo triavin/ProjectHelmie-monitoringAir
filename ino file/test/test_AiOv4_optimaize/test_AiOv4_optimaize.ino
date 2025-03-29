@@ -163,7 +163,7 @@ float fuzzifikasiSuhuPanas(){
   // if x >= A && x <= B
   else if (suhu >= fuzzyPanas[0] && suhu <= fuzzyPanas[1])
   {
-    return (suhu - fuzzyPanas[1]) / (fuzzyPanas[1] - fuzzyPanas[0]);
+    return (suhu - fuzzyPanas[0]) / (fuzzyPanas[1] - fuzzyPanas[0]);
   }
 
   // if x >= B
@@ -310,8 +310,13 @@ float fuzzyfikasiPhTinggi(){
 float minimum(float nilai1, float nilai2) {
     if (nilai1 < nilai2) {
         return nilai1;
-    } else {
-        return nilai2;
+    }else if (nilai2 < nilai1)
+    {
+      return nilai2;
+    }
+    else
+    {
+      return nilai1;
     }
 }
 
@@ -376,6 +381,7 @@ void implikasi(){
 // fungsi defuzifikasi untuk nilai suhu up
 float defuzzifikasiSuhuUp(){
 
+  implikasi();
   nilaiPertama = 0;
   nilaiKedua = 0;
 
@@ -390,6 +396,7 @@ float defuzzifikasiSuhuUp(){
 // fungsi deffuzifikasi untuk nilai suhu down
 float defuzzifikasiSuhuDown(){
 
+  implikasi();
   nilaiPertama = 0;
   nilaiKedua = 0;
 
@@ -404,6 +411,7 @@ float defuzzifikasiSuhuDown(){
 // fungsi deffuzifikasi untuk nilai pH up
 float defuzzifikasiPhStabilizer(){
 
+  implikasi();
   nilaiPertama = 0;
   nilaiKedua = 0;
 
@@ -556,7 +564,7 @@ void loop() {
   getNilaiSuhu();
   
   // menjalankan fungsi implikasi
-  implikasi();
+//  implikasi();
 
   // menjalankan fungsi untuk mendapatkan nilai output hasil penerapan metode fuzzy logic
   float nilaiOutputSuhuUp            = defuzzifikasiSuhuUp();
