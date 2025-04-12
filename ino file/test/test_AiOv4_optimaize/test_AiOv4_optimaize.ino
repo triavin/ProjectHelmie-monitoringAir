@@ -9,13 +9,13 @@ OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensorSuhu(&oneWire);
 
 // variabel ssid dan password wifi dan web server
-//char *ssid = "Tuyul_plus";
+//char *ssid = "Free Trial";
 //char *pass = "1q2w3e4r5t";
 
-char *ssid = "ALT_F4";
-char *pass = "MT4sumA$";
+char *ssid = "Free_Trial";
+char *pass = "beliinkopidulu";
 
-char *server = "192.168.86.101";
+char *server = "192.168.18.200";
 
 // setup Output for Relay
 //#define relayPompaSuhuUp 5 // relay 1
@@ -571,13 +571,13 @@ void loop() {
   float nilaiOutputSuhuDown          = defuzzifikasiSuhuDown();
   float nilaiOutputPhStabilizer      = defuzzifikasiPhStabilizer();
 
-  String url = "/testv2/api/createDetail.php?idD=7&suhu=" + String(suhu) + "&ph=" + String(pH) + "&osu=" + String(nilaiOutputSuhuUp) + "&osd=" + String(nilaiOutputSuhuDown) + "&op=" + String(nilaiOutputPhStabilizer);
+  String url = "/testv2/api/createDetail.php?idD=1&suhu=" + String(suhu) + "&ph=" + String(pH) + "&osu=" + String(nilaiOutputSuhuUp) + "&osd=" + String(nilaiOutputSuhuDown) + "&op=" + String(nilaiOutputPhStabilizer);
   Serial.println(url);
-  httpGet(server, url, 8080);  
+  httpGet(server, url, 80);  
   
   // jalankan fungsi kontrol relay
-//  kontrolRelay(nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
-  kontrolRelay(nilaiOutputSuhuUp, nilaiOutputSuhuDown, 0);
+  kontrolRelay(nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer);
+//  kontrolRelay(nilaiOutputSuhuUp, nilaiOutputSuhuDown, 0);
 
   // delay selama 60 detik
   delay(60000);
