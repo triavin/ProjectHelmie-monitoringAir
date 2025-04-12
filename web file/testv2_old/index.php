@@ -166,8 +166,8 @@ $latestData = fetchLatestDataForAllDevices($db);
                                     <p class="card-text">Temperature: ' . htmlspecialchars($data['suhu']) . '°C</p>
                                     <p class="card-text">pH Level: ' . htmlspecialchars($data['ph']) . '</p>
                                     <p class="card-text"><small class="text-muted">Last updated: ' . htmlspecialchars($data['inputTime']) . '</small></p>
-                                    <a href="device_history.php?idDevice=' . htmlspecialchars($data['idDevice']) . '" class="btn btn-primary">
-                                        Lihat Riwayat
+                                    <a href="device_features.php?idDevice=' . htmlspecialchars($data['idDevice']) . '" class="btn btn-primary">
+                                        Lihat Fitur
                                         <i style="margin-left: 2px;" class="fa-solid fa-arrow-right"></i>
                                     </a>
                                 

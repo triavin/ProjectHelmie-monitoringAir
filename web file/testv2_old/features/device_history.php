@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '\config\database.php';
+require_once __DIR__ . ' .\config\database.php';
 
 // Create a database connection
 $database = new Database();
@@ -8,12 +8,12 @@ $db = $database->getConnection();
 function generateNavbar($activePage) {
     $pages = [
         'index.php' => 'Home',
-        'features/add_device.php' => 'Add Device',
+        'add_device.php' => 'Add Device',
         'history.php' => 'History'
     ];
 
     echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark">';
-    echo '<a class="navbar-brand" href="index.php">Dashboard</a>';
+    echo '<a class="navbar-brand" href="#">Dashboard</a>';
     echo '<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">';
     echo '<span class="navbar-toggler-icon"></span>';
     echo '</button>';
@@ -115,7 +115,7 @@ generateNavbar('history.php');
 </head>
 <body>
     <div class="container mt-3">
-        <h2 class="text-center mb-2">Data Sensor</h2>
+        <h2 class="text-center mb-2">Sensor Data Table</h2>
         <div id="sensor-data" class="table-responsive">
             <?php fetchSensorData($db, $limit, $offset,$idDevice); ?>
         </div>

@@ -50,6 +50,9 @@ if (!empty($idDevice)) {
 
         // Redirect based on the action
         switch ($action) {
+            case 'update':
+                header("Location: update_device.php?idDevice=$idDevice");
+                exit();
             case 'delete':
                 header("Location: delete_device.php?idDevice=$idDevice");
                 exit();
@@ -116,6 +119,24 @@ if (!empty($idDevice)) {
     <div class="container">
         <h2 class="mb-4 text-center">Device Features</h2>
         <div class="row" style="justify-content:center;">
+            <!-- <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="fa-solid fa-circle-plus fa-4x mb-3 text-primary"></i>
+                        <h5 class="card-title">Add Device</h5>
+                        <a href="device_features.php?action=add&idDevice=<?= $idDevice ?>" class="btn btn-primary">Add</a>
+                    </div>
+                </div>
+            </div> -->
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-edit fa-4x mb-3 text-warning"></i>
+                        <h5 class="card-title">Update Device Data</h5>
+                        <a href="device_features.php?action=update&idDevice=<?= $idDevice ?>" class="btn btn-warning">Update</a>
+                    </div>
+                </div>
+            </div>
             <div class="col-md-6 col-lg-3 mb-4">
                 <div class="card">
                     <div class="card-body text-center">

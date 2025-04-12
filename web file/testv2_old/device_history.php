@@ -8,12 +8,12 @@ $db = $database->getConnection();
 function generateNavbar($activePage) {
     $pages = [
         'index.php' => 'Home',
-        'features/add_device.php' => 'Add Device',
+        'add_device.php' => 'Add Device',
         'history.php' => 'History'
     ];
 
     echo '<nav class="navbar navbar-expand-lg navbar-dark bg-dark">';
-    echo '<a class="navbar-brand" href="index.php">Dashboard</a>';
+    echo '<a class="navbar-brand" href="#">Dashboard</a>';
     echo '<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">';
     echo '<span class="navbar-toggler-icon"></span>';
     echo '</button>';

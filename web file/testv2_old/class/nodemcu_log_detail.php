@@ -26,53 +26,6 @@ class Nodemcu_log_detail {
         }
     }
 
-    public function createLogDataV2($idDevice, $outputSuhuDown, $outputSuhuUp, $outputPhStabilizer) {
-        // Query untuk mengambil suhu dan pH terbaru dari dt_sensor
-        $suhu = 0; 
-        $ph = 0;
-        
-        $selectQuery = "SELECT suhu, ph FROM dt_sensor ORDER BY inputTime DESC LIMIT 1";
-        
-        if ($selectStmt = $this->conn->prepare($selectQuery)) {
-            $selectStmt->execute();
-            $selectStmt->bind_result($suhu, $ph);
-            $selectStmt->fetch();
-            $selectStmt->close();
-            
-            // Melanjutkan dengan query insert ke dt_sensor_detail
-            $insertQuery = "INSERT INTO dt_sensor_detail (
-                idDevice, suhu, ph, nilaiOutputSuhuUp, nilaiOutputSuhuDown, nilaiOutputPhStabilizer, statusRelaySuhuUp, statusRelaySuhuDown, statusRelayPhStabilizer
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            
-            if ($insertStmt = $this->conn->prepare($insertQuery)) {
-                $statusRelaySuhuUp = ($outputSuhuUp >= 1) ? 1 : 0; 
-                $statusRelaySuhuDown = ($outputSuhuDown >= 1) ? 1 : 0; 
-                $statusRelayPhStabilizer = ($outputPhStabilizer >= 1) ? 1 : 0;
-    
-                $insertStmt->bind_param("idddddiii", $idDevice, $suhu, $ph, $outputSuhuUp, $outputSuhuDown, $outputPhStabilizer, $statusRelaySuhuUp, $statusRelaySuhuDown, $statusRelayPhStabilizer);
-    
-                if ($insertStmt->execute()) {
-                    // Return true jika berhasil
-                    return true;
-                } else {
-                    // Tampilkan error jika eksekusi gagal
-                    echo "Execute failed: (" . $insertStmt->errno . ") " . $insertStmt->error;
-                    return false;
-                }
-    
-                $insertStmt->close();
-            } else {
-                // Tampilkan error jika prepare gagal
-                echo "Prepare failed: (" . $this->conn->errno . ") " . $this->conn->error;
-                return false;
-            }
-        } else {
-            // Tampilkan error jika prepare select gagal
-            echo "Prepare failed: (" . $this->conn->errno . ") " . $this->conn->error;
-            return false;
-        }
-    }
-
     public function createLogDataDetail($idDevice, $suhu, $ph, $outputSuhuDown, $outputSuhuUp, $outputPhStabilizer) {
         $query = "INSERT INTO dt_sensor_detail (
                 idDevice

@@ -11,9 +11,12 @@ DallasTemperature sensorSuhu(&oneWire);
 // variabel ssid dan password wifi dan web server
 //char *ssid = "Free Trial";
 //char *pass = "1q2w3e4r5t";
+//
+//char *ssid = "Free_Trial";
+//char *pass = "beliinkopidulu";
 
-char *ssid = "Free_Trial";
-char *pass = "beliinkopidulu";
+char *ssid = "LOQ";
+char *pass = "jodohaamiin";
 
 char *server = "192.168.18.200";
 
@@ -535,17 +538,17 @@ void setup() {
 //   digitalWrite(relayKipas, HIGH);
 //   digitalWrite(relayThermo, HIGH);
 
-   
-   digitalWrite(relayPompaSuhuUp, LOW);
-   delay(10000);
-   digitalWrite(relayPompaSuhuUp, HIGH);
-   digitalWrite(relayPompaSuhuDown, LOW);
-   delay(10000);
    digitalWrite(relayPompaSuhuDown, HIGH);
    digitalWrite(relayPompaDrain, HIGH);
    digitalWrite(relayPompaFill, HIGH);
    digitalWrite(relayKipas, HIGH);
    digitalWrite(relayThermo, HIGH);
+   digitalWrite(relayPompaSuhuUp, LOW);
+   delay(10000);
+   digitalWrite(relayPompaSuhuUp, HIGH);
+   digitalWrite(relayPompaSuhuDown, LOW);
+   delay(10000);
+   
    // initial LED indicator
 
   // menghubungkan kejaringan wifi
