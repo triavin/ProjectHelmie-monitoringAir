@@ -18,7 +18,7 @@ DallasTemperature sensorSuhu(&oneWire);
 char *ssid = "LOQ";
 char *pass = "jodohaamiin";
 
-char *server = "192.168.18.200";
+char *server = "triavin.my.id";
 
 // setup Output for Relay
 //#define relayPompaSuhuUp 5 // relay 1
