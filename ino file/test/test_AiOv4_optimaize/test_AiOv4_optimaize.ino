@@ -9,24 +9,13 @@ OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensorSuhu(&oneWire);
 
 // variabel ssid dan password wifi dan web server
-//char *ssid = "Free Trial";
-//char *pass = "1q2w3e4r5t";
-//
 //char *ssid = "Free_Trial";
 //char *pass = "beliinkopidulu";
 
-char *ssid = "LOQ";
-char *pass = "jodohaamiin";
+char *ssid = "haah?!?!";
+char *pass = "beliinkopidulu";
 
 char *server = "triavin.my.id";
-
-// setup Output for Relay
-//#define relayPompaSuhuUp 5 // relay 1
-//#define relayPompaSuhuDown 6 // relay 2
-//#define relayPompaDrain 7 // relay 3
-//#define relayPompaFill 8 // relay 4
-//#define relayKipas 9 // relay 5
-//#define relayThermo 10 // relay 6
 
 // setup Output for Relay
 #define relayKipas 5 // relay 1
@@ -504,6 +493,7 @@ void checkWifiStatus(){
   {
     // menghubungkan kejaringan wifi
     setWifi(ssid, pass);
+    flagWifi = 1;
   }
 }
 
@@ -548,6 +538,7 @@ void setup() {
    digitalWrite(relayPompaSuhuUp, HIGH);
    digitalWrite(relayPompaSuhuDown, LOW);
    delay(10000);
+   digitalWrite(relayPompaSuhuDown, HIGH);
    
    // initial LED indicator
 
@@ -574,7 +565,7 @@ void loop() {
   float nilaiOutputSuhuDown          = defuzzifikasiSuhuDown();
   float nilaiOutputPhStabilizer      = defuzzifikasiPhStabilizer();
 
-  String url = "/testv2/api/createDetail.php?idD=1&suhu=" + String(suhu) + "&ph=" + String(pH) + "&osu=" + String(nilaiOutputSuhuUp) + "&osd=" + String(nilaiOutputSuhuDown) + "&op=" + String(nilaiOutputPhStabilizer);
+  String url = "/api/createDetail.php?idD=1&suhu=" + String(suhu) + "&ph=" + String(pH) + "&osu=" + String(nilaiOutputSuhuUp) + "&osd=" + String(nilaiOutputSuhuDown) + "&op=" + String(nilaiOutputPhStabilizer);
   Serial.println(url);
   httpGet(server, url, 80);  
   
